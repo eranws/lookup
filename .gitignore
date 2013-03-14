@@ -1,0 +1,14 @@
+obj/
+ipch/lookup-3cec0969/lookup-a2a84817.ipch
+bin/lookup.exe
+bin/lookup.exp
+bin/lookup.lib
+bin/lookup_debug.exe
+bin/lookup_debug.exp
+bin/lookup_debug.ilk
+bin/lookup_debug.lib
+bin/lookup_debug_debugInfo.pdb
+lookup.opensdf
+lookup.sdf
+lookup.suo
+lookup.vcxproj.user
