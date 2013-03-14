@@ -108,11 +108,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Bird.cpp" />
+    <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofxColorStream.cpp" />
     <ClCompile Include="src\ofxDepthStream.cpp" />
     <ClCompile Include="src\ofxOniDevice.cpp" />
     <ClCompile Include="src\ofxRecorder.cpp" />
+    <ClCompile Include="src\OrthoCamera.cpp" />
+    <ClCompile Include="src\Swarm.cpp" />
     <ClCompile Include="src\testApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscMessage.cpp" />
@@ -143,10 +147,14 @@
     <ClCompile Include="..\..\..\addons\ofxProfile\src\ofxProfile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Bird.h" />
+    <ClInclude Include="src\Grid.h" />
     <ClInclude Include="src\ofxColorStream.h" />
     <ClInclude Include="src\ofxDepthStream.h" />
     <ClInclude Include="src\ofxOniDevice.h" />
     <ClInclude Include="src\ofxRecorder.h" />
+    <ClInclude Include="src\OrthoCamera.h" />
+    <ClInclude Include="src\Swarm.h" />
     <ClInclude Include="src\testApp.h" />
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h" />
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOscArg.h" />

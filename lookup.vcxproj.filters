@@ -100,6 +100,18 @@
     <ClCompile Include="src\ofxRecorder.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\OrthoCamera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Swarm.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bird.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Grid.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -411,6 +423,18 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRecorder.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\OrthoCamera.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Swarm.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Bird.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Grid.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

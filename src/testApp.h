@@ -7,6 +7,12 @@
 #include "ofxRecorder.h"
 #include "ofxUI.h"
 
+#include "Swarm.h"
+#include "Grid.h"
+#include "OrthoCamera.h"
+
+#define N_CAMERAS 4
+
 class testApp : public ofBaseApp{
 
 	public:
@@ -15,14 +21,7 @@ class testApp : public ofBaseApp{
 		void draw();
 
 		void keyPressed  (int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
 
 private:
 		ofxOniDevice oniDevice;
@@ -33,5 +32,37 @@ private:
 		ofPtr<ofxUICanvas> gui1;   	
 		void setupGui(); 
 		void guiEvent(ofxUIEventArgs &e);
+		void setupScene();
+
+		void setupViewports();
+		void drawScene(int iCameraDraw);
+		void updateMouseRay();
+		void drawVideo();
+
+		//cameras (all these inherit from ofCamera)
+		ofEasyCam camEasyCam;
+		orthoCamera camFront;
+		orthoCamera camTop;
+		orthoCamera camLeft;
+
+		//cameras have parent?
+		bool bCamParent;
+
+		//camera pointers
+		ofCamera * cameras[N_CAMERAS];
+		int iMainCamera;
+
+		//viewports
+		ofRectangle viewMain;
+		ofRectangle viewGrid[N_CAMERAS];
+
+		//my custom node
+		swarm nodeSwarm;
+		grid nodeGrid;
+
+		//ray drawn under mouse cursor [start,end]
+		ofVec3f ray[2];
+
+		bool toDrawVideo;
 
 };
