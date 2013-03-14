@@ -9,6 +9,17 @@ swarm::swarm(){
 
 void swarm::init(int nParticles, float positionDispersion, float velocityDispersion){
 
+	ofDirectory dir;
+	int nFiles = dir.listDir("plops");
+	if(nFiles) {        
+		for(int i=0; i<dir.numFiles(); i++) { 
+			// add the image to the vector
+			string filePath = dir.getPath(i);
+			images.push_back(ofImage());
+			images.back().loadImage(filePath);
+		}
+	}
+
 	// Check if we've already initialised
 	if(particles.size() != 0){
 		// clear out old data
@@ -47,6 +58,9 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 }
 
 void swarm::customDraw(){
+
+
+
 	// We run the update ourselves manually. ofNode does
 	//  not do this for us.
 	update();
@@ -68,6 +82,16 @@ void swarm::customDraw(){
 		ofSetColor(particles[i].color);
 
 		ofSphere(particles[i].position, 1.0);
+
+		ofPushMatrix();
+		ofTranslate(particles[i].position);
+		ofScale(0.1, 0.1);
+		int frameIndex = ofGetFrameNum() % images.size();
+		// draw the image sequence at the new frame count
+		ofSetColor(255);
+		images[frameIndex].draw(0, 0);
+		ofPopMatrix();
+
 
 		ofPopStyle();
 	}
