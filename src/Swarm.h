@@ -13,6 +13,7 @@ class swarm : public ofNode {
 		ofVec3f position;
 		ofVec3f velocity;
 		ofColor color;
+		int animationFrameStart;
 	};
 
 

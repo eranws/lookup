@@ -59,7 +59,7 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 		newParticle.position = position;
 		newParticle.velocity = velocity;
 		newParticle.color = color;
-
+		newParticle.animationFrameStart = rand();
 		// add our new particle to the vector
 		particles.push_back(newParticle);
 	}
@@ -98,7 +98,8 @@ void swarm::customDraw(){
 		ofTranslate(particles[i].position);
 		
 		ofScale(0.1, 0.1);
-		int frameIndex = ofGetFrameNum() % images.size();
+		int frameIndex = ofGetFrameNum()  + particles[i].animationFrameStart;
+		frameIndex %= images.size();
 		// draw the image sequence at the new frame count
 		ofSetColor(255);
 
