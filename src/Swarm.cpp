@@ -37,44 +37,18 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 		particles.clear();
 	}
 
-	ofSeedRandom();
-	//
-	ofVec3f position, velocity;
-	ofColor color;
-	for(int i = 0; i < nParticles; i++){
-		position.x = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
-		position.y = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
-		position.z = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
-
-		velocity.x = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10;
-		velocity.y = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10;
-		velocity.z = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
-
-		color.r = ofRandom(255.0f);
-		color.g = ofRandom(255.0f);
-		color.b = 150.0f;
-		color.a = 255.0f;
-
-		particle newParticle;
-		newParticle.position = position;
-		newParticle.velocity = velocity;
-		newParticle.color = color;
-		newParticle.animationFrameStart = rand();
-		// add our new particle to the vector
-		particles.push_back(newParticle);
+	for (int i = 0; i < nParticles; i++){
+		particles.push_back(Bird(positionDispersion, velocityDispersion));
 	}
+
 
 }
 
 void swarm::customDraw(){
 
-
-
 	// We run the update ourselves manually. ofNode does
 	//  not do this for us.
 	update();
-
-
 
 	//--
 	// Draw particles
@@ -89,21 +63,19 @@ void swarm::customDraw(){
 	for(int i = 0; i < particles.size(); i++){
 		ofPushStyle();
 		ofSetColor(particles[i].color);
-
 		ofSphere(particles[i].position, 1.0);
-
 		ofDrawArrow(particles[i].position, particles[i].position + particles[i].velocity);
 
 		ofPushMatrix();
 		ofTranslate(particles[i].position);
 		
 		ofScale(0.1, 0.1);
-		int frameIndex = particles[i].animationFrameStart;
 
-		int c = ofGetFrameNum() / images.size();
-
+		int frameIndex = ofGetFrameNum() - particles[i].animationFrameStart; //fix animation not starting in 0;
+		int animationCounter = (frameIndex + particles[i].birth) / images.size();
+		ofDrawBitmapString(ofToString(animationCounter), 0, 0, 0);
 		int glidingFactor = 10; //flap wings each X times
-		if (c % glidingFactor == 0) frameIndex += ofGetFrameNum();
+		if ((animationCounter + particles[i].glideFrameStart) % glidingFactor > 0) frameIndex = particles[i].animationFrameStart;
 
 		// draw the image sequence at the new frame count
 		ofSetColor(255);

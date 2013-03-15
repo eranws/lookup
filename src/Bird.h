@@ -1,10 +1,20 @@
 #pragma once
 #include "ofNode.h"
 
-class Bird : ofNode
+class Bird : public ofNode
 {
 public:
-	Bird();
+	
+	Bird(int positionDispersion, int velocityDispersion);
 	~Bird();
+
+	ofVec3f position;
+	ofVec3f velocity;
+	ofColor color;
+
+	//animation
+	int animationFrameStart;
+	int glideFrameStart;
+	int birth;
 };
 
