@@ -99,7 +99,11 @@ void swarm::customDraw(){
 		
 		ofScale(0.1, 0.1);
 		int frameIndex = particles[i].animationFrameStart;
-		frameIndex += ofGetFrameNum();
+
+		int c = ofGetFrameNum() / images.size();
+
+		int glidingFactor = 10; //flap wings each X times
+		if (c % glidingFactor == 0) frameIndex += ofGetFrameNum();
 
 		// draw the image sequence at the new frame count
 		ofSetColor(255);
