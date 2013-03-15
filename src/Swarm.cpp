@@ -98,13 +98,14 @@ void swarm::customDraw(){
 		ofTranslate(particles[i].position);
 		
 		ofScale(0.1, 0.1);
-		int frameIndex = ofGetFrameNum()  + particles[i].animationFrameStart;
-		frameIndex %= images.size();
+		int frameIndex = particles[i].animationFrameStart;
+		frameIndex += ofGetFrameNum();
+
 		// draw the image sequence at the new frame count
 		ofSetColor(255);
 
 		ofRotateZ(atan2f(particles[i].velocity.y, particles[i].velocity.x) * RAD_TO_DEG);
-		images[frameIndex].draw(0, 0);
+		images[frameIndex % images.size()].draw(0, 0);
 		ofPopMatrix();
 
 
