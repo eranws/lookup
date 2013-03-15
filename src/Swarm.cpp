@@ -10,13 +10,22 @@ swarm::swarm(){
 void swarm::init(int nParticles, float positionDispersion, float velocityDispersion){
 
 	ofDirectory dir;
-	int nFiles = dir.listDir("plops");
+
+
+	//int nFiles = dir.listDir("plops");
+	int nFiles = dir.listDir("PNG_yellow_new");
+
 	if(nFiles) {        
 		for(int i=0; i<dir.numFiles(); i++) { 
 			// add the image to the vector
 			string filePath = dir.getPath(i);
 			images.push_back(ofImage());
 			images.back().loadImage(filePath);
+		}
+
+		for(int i = 0; i < dir.numFiles(); i++) {
+			images[i].setAnchorPercent(0.5f, 0.5f);
+			images[i].rotate90(2);
 		}
 	}
 
@@ -37,8 +46,8 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 		position.y = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
 		position.z = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
 
-		velocity.x = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
-		velocity.y = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
+		velocity.x = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10;
+		velocity.y = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10;
 		velocity.z = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
 
 		color.r = ofRandom(255.0f);
@@ -83,12 +92,17 @@ void swarm::customDraw(){
 
 		ofSphere(particles[i].position, 1.0);
 
+		ofDrawArrow(particles[i].position, particles[i].position + particles[i].velocity);
+
 		ofPushMatrix();
 		ofTranslate(particles[i].position);
+		
 		ofScale(0.1, 0.1);
 		int frameIndex = ofGetFrameNum() % images.size();
 		// draw the image sequence at the new frame count
 		ofSetColor(255);
+
+		ofRotateZ(atan2f(particles[i].velocity.y, particles[i].velocity.x) * RAD_TO_DEG);
 		images[frameIndex].draw(0, 0);
 		ofPopMatrix();
 

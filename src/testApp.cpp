@@ -6,9 +6,12 @@
 void testApp::setup(){
 
 	ofSetVerticalSync(true);
+	ofSetWindowTitle("LookUp!");
 	ofBackground(70, 70, 70);
 	ofEnableSmoothing();
 	glEnable(GL_DEPTH_TEST);
+	glAlphaFunc(GL_GREATER, 0.5);
+	glEnable(GL_ALPHA_TEST);
 
 	try
 	{
@@ -232,7 +235,7 @@ void testApp::setupScene()
 	setupViewports();
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
-	nodeSwarm.init(50, 50, 5);	
+	nodeSwarm.init(50, 100, 5);	
 }
 
 void testApp::setupViewports(){
