@@ -159,7 +159,7 @@ void testApp::setupGui()
 	gui1->addWidgetDown(new ofxUILabel("BUTTONS", OFX_UI_FONT_MEDIUM)); 
 	gui1->addButton("DRAW GRID", false, dim, dim);
 	gui1->addWidgetDown(new ofxUILabel("TOGGLES", OFX_UI_FONT_MEDIUM)); 
-	gui1->addToggle( "D_GRID", false, dim, dim);
+	gui1->addToggle( "D_GRID", &toDrawGrid, dim, dim);
 
 	
 	gui1->addSpacer(length-xInit, 2);
@@ -329,7 +329,7 @@ void testApp::draw(){
 void testApp::drawScene(int iCameraDraw){
 
 	nodeSwarm.draw();
-	nodeGrid.draw();
+	if (toDrawGrid) nodeGrid.draw();
 
 	//--
 	// Draw frustum preview for ofEasyCam camera
