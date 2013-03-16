@@ -134,10 +134,7 @@ void testApp::setupGui()
 	gui1->addSpacer(length-xInit, 2);
 	vector<string> depthModes = depthStream.getVideoModesString();
 	//gui1->addRadio("RADIO HORIZONTAL", names, OFX_UI_ORIENTATION_HORIZONTAL, dim, dim); 
-	gui1->addRadio("Depth Modes", depthModes, OFX_UI_ORIENTATION_VERTICAL, dim, dim); 
-
-
-
+	//gui1->addRadio("Depth Modes", depthModes, OFX_UI_ORIENTATION_VERTICAL, dim, dim); 
 
 	gui1->addSpacer(length-xInit, 2);
 
@@ -156,11 +153,15 @@ void testApp::setupGui()
 
 		
 	gui1->addSpacer(length-xInit, 2);
-	gui1->addWidgetDown(new ofxUILabel("BUTTONS", OFX_UI_FONT_MEDIUM)); 
-	gui1->addButton("DRAW GRID", false, dim, dim);
+	//gui1->addWidgetDown(new ofxUILabel("BUTTONS", OFX_UI_FONT_MEDIUM)); 
+	//gui1->addButton("DRAW GRID", false, dim, dim);
 	gui1->addWidgetDown(new ofxUILabel("TOGGLES", OFX_UI_FONT_MEDIUM)); 
-	gui1->addToggle( "D_GRID", &toDrawGrid, dim, dim);
+	gui1->addToggle( "Draw Grid", &toDrawGrid, dim, dim);
+	gui1->addToggle( "Draw Video", &toDrawVideo, dim, dim);
+	gui1->addToggle( "Draw Side Viewports", &toDrawSideViewports, dim, dim);
 
+	
+	
 	
 	gui1->addSpacer(length-xInit, 2);
 	gui1->addWidgetDown(new ofxUILabel("2D PAD", OFX_UI_FONT_MEDIUM)); 
@@ -244,7 +245,8 @@ void testApp::setupScene()
 	setupViewports();
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
-	nodeSwarm.init(50, 100, 5);	
+	nodeSwarm.init(100, 5);
+	nodeSwarm.addParticle(5);
 }
 
 void testApp::setupViewports(){
@@ -285,12 +287,21 @@ void testApp::draw(){
 
 	cameras[iMainCamera]->end();
 
-	// draw side viewports
-	for(int i = 0; i < N_CAMERAS; i++){
-		cameras[i]->begin(viewGrid[i]);
-		//drawScene(i);
-		cameras[i]->end();
+	//TODO: add widgets dynamically in one line
+	//#define addMat(x) cv::Mat& x = matMap[#x] = cv::Mat();
+	//float dim = 16;
+	//static ofxUIToggle* toDrawSideViewports = new ofxUIToggle("toDrawSideViewports", false, dim, dim);
+	//if(!gui1->getWidget("toDrawSideViewports"))  gui1->addWidget(toDrawSideViewports);
+
+	if (toDrawSideViewports)
+	{
+		for(int i = 0; i < N_CAMERAS; i++){
+			cameras[i]->begin(viewGrid[i]);
+			drawScene(i);
+			cameras[i]->end();
+		}
 	}
+
 
 	// Draw annotations (text, gui, etc)
 	ofPushStyle();
@@ -303,6 +314,8 @@ void testApp::draw(){
 	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
 	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), viewMain.x + 20, 110);
+	ofDrawBitmapString(ofToString(nodeSwarm.size()), viewMain.x + 20, 130);
+
 
 
 	ofDrawBitmapString("EasyCam",   viewGrid[0].x + 20, viewGrid[0].y + 30);
@@ -477,7 +490,7 @@ void testApp::keyPressed(int key){
 
 	case 'f': ofToggleFullscreen(); break;
 	case 'g': gui1->toggleVisible(); break;
-	case 'd': toDrawVideo = !toDrawVideo; break;
+	case 'd': toDrawVideo = !toDrawVideo; break; //TODO: update gui
 
 	case 'p':
 		if(bCamParent){
@@ -495,7 +508,18 @@ void testApp::keyPressed(int key){
 			bCamParent = true;
 		}
 		break;
+
+	case 'a':
+		nodeSwarm.addParticle(1);
+		break;
+	case 'A':	
+		nodeSwarm.addParticle(10);
+		break;
+
+	default:
+		break;
 	}
+
 }
 
 //--------------------------------------------------------------

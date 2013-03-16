@@ -7,11 +7,9 @@ swarm::swarm(){
 	light.setAmbientColor(ofColor(0, 0, 0));
 }
 
-void swarm::init(int nParticles, float positionDispersion, float velocityDispersion){
+void swarm::init(float positionDispersion, float velocityDispersion){
 
 	ofDirectory dir;
-
-
 	//int nFiles = dir.listDir("plops");
 	int nFiles = dir.listDir("PNG_yellow_new");
 
@@ -37,11 +35,15 @@ void swarm::init(int nParticles, float positionDispersion, float velocityDispers
 		particles.clear();
 	}
 
+	_velocityDispersion = velocityDispersion;
+	_positionDispersion = positionDispersion;
+}
+
+void swarm::addParticle(int nParticles)
+{
 	for (int i = 0; i < nParticles; i++){
-		particles.push_back(Bird(positionDispersion, velocityDispersion));
+		particles.push_back(Bird(_positionDispersion, _velocityDispersion));
 	}
-
-
 }
 
 void swarm::customDraw(){
@@ -166,4 +168,9 @@ void swarm::update(){
 		// -----------
 
 	}
+}
+
+int swarm::size()
+{
+	return particles.size();
 }

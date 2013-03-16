@@ -64,5 +64,7 @@ private:
 		ofVec3f ray[2];
 
 		bool toDrawVideo;
+		bool toDrawGrid;
+		bool toDrawSideViewports;
 
 };

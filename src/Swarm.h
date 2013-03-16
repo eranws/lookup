@@ -13,7 +13,10 @@ class swarm : public ofNode {
 
 public:
 	swarm();
-	void init(int nParticles, float positionDispersion, float velocityDispersion);
+	void init(float positionDispersion, float velocityDispersion);
+	void addParticle(int nParticles = 1);
+	int size();
+
 	void customDraw();
 	ofLight light;
 
@@ -26,5 +29,8 @@ protected:
 	vector<Bird> particles;
 
 	vector <ofImage> images;
+
+	float _positionDispersion;
+	float _velocityDispersion;
 
 };
