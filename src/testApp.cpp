@@ -34,7 +34,7 @@ void testApp::setup(){
 	setupGui(); 
 	setupScene();
 
-	toDrawVideo = false;
+	toDrawVideo = true;
 	gui1->setVisible(false);
 }
 
@@ -77,9 +77,11 @@ void testApp::drawVideo(){
 	
 
 	//depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
-	depthTex.draw(0, 0);
-
-	colorTex.draw(depthTex.getWidth(),0);
+	ofPushMatrix();
+	ofTranslate(-depthTex.getWidth() / 2, -depthTex.getHeight() / 2, 0);
+	depthTex.draw(0, 0, 0);
+	colorTex.draw(0 ,0, -1);
+	ofPopMatrix();
 
 	/*
 
@@ -120,7 +122,7 @@ void testApp::setupGui()
 	gui1->addSpacer(length-xInit, 2);
 
 	gui1->addWidgetDown(new ofxUILabel("Depth Cutoff", OFX_UI_FONT_MEDIUM)); 
-	gui1->addRangeSlider("RSLIDER", 0.0, 10000.0, 450.0, 5000.0, length-xInit,dim);
+	gui1->addRangeSlider("RSLIDER", 0.0, 10000.0, 450.0, 2000.0, length-xInit,dim);
 
 	gui1->addSpacer(length-xInit, 2);
 	vector<string> depthModes = depthStream.getVideoModesString();
@@ -219,7 +221,7 @@ void testApp::setupScene()
 	cameras[0] = &camEasyCam;
 
 	// front
-	camFront.scale = 20;
+	camFront.scale = 200;
 	cameras[1] = &camFront;
 
 	// top
