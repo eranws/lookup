@@ -65,6 +65,11 @@ void testApp::drawVideo(){
 	m.setTo(0, invertDepthMask);
 	cv::Mat m8;	m.convertTo(m8, CV_8UC1, 0.25);
 
+	
+	ofxCv::ContourFinder cf;
+	cf.setAutoThreshold(false);
+	cf.findContours(m8);
+
 
 
 	ofTexture depthTex;
@@ -79,7 +84,9 @@ void testApp::drawVideo(){
 	//depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
 	ofPushMatrix();
 	ofTranslate(-depthTex.getWidth() / 2, -depthTex.getHeight() / 2, 0);
-	depthTex.draw(0, 0, 0);
+	depthTex.draw(0, 0, -0.1);
+	cf.draw();
+	//cf.getPolyline(0).draw();
 	colorTex.draw(0 ,0, -1);
 	ofPopMatrix();
 
