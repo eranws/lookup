@@ -10,6 +10,7 @@
 #include "Swarm.h"
 #include "Grid.h"
 #include "OrthoCamera.h"
+#include "ContourFinder.h"
 
 #define N_CAMERAS 4
 
@@ -37,7 +38,6 @@ private:
 		void setupViewports();
 		void drawScene(int iCameraDraw);
 		void updateMouseRay();
-		void drawVideo();
 
 		//cameras (all these inherit from ofCamera)
 		ofEasyCam camEasyCam;
@@ -67,4 +67,17 @@ private:
 		bool toDrawGrid;
 		bool toDrawSideViewports;
 
+		ofxCv::ContourFinder cf;
+		std::vector<string> outputStrings;
+
+		void drawVideo();
+
+		void updateMats();
+		cv::Mat colorMat;
+		cv::Mat depthMat;
+
+		void allocateTextures();
+		void cvProcess();
+		ofTexture depthTex;
+		ofTexture colorTex;
 };

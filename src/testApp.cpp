@@ -1,6 +1,7 @@
 #include "testApp.h"
 
 #include "ofxCv.h"
+#include "Utilities.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -19,7 +20,7 @@ void testApp::setup(){
 	}
 	catch (exception e)
 	{
-		oniDevice.setup("c:\\1.oni");
+		oniDevice.setup("c:\\b1.oni");
 	}
 
 
@@ -30,57 +31,21 @@ void testApp::setup(){
 	recorder.setup();
 	recorder.addStream(depthStream.getStream());
 	recorder.addStream(colorStream.getStream());
-
+	updateMats();
+	allocateTextures();
+	
 	setupGui(); 
 	setupScene();
 
 	toDrawVideo = true;
 	gui1->setVisible(false);
+
+	cf.setAutoThreshold(false);
 }
 
 
 void testApp::drawVideo(){
-	using namespace cv;
-
-	ofPtr<ofPixels> colorPixels = colorStream.getPixels();
-	cv::Mat colorMat = ofxCv::toCv(*colorPixels);
-	Mat c = colorMat.clone();
-
-	ofPtr<ofShortPixels> depthPixels = depthStream.getPixels();
-	cv::Mat depthMat = ofxCv::toCv(*depthPixels);
-
-
-	Mat m;
-	m = depthMat.clone();
-//	resize(m, m, cv::Size(), 3, 3, CV_INTER_CUBIC);
-
-	ofxUISlider* s0 = (ofxUISlider*)gui1->getWidget("0");		
-
-	ofxUIRangeSlider* r = (ofxUIRangeSlider*)gui1->getWidget("RSLIDER");		
 	
-	Mat depthMask = (m > r->getScaledValueLow() &  m < r->getScaledValueHigh());
-	Mat invertDepthMask;
-	cv::bitwise_not(depthMask, invertDepthMask);
-
-	m.setTo(0, invertDepthMask);
-	cv::Mat m8;	m.convertTo(m8, CV_8UC1, 0.25);
-
-	
-	ofxCv::ContourFinder cf;
-	cf.setAutoThreshold(false);
-	cf.findContours(m8);
-
-
-
-	ofTexture depthTex;
-	depthTex.allocate(m8.cols, m8.rows, GL_LUMINANCE);
-	depthTex.loadData(m8.ptr(), m8.cols, m8.rows, GL_LUMINANCE);
-
-	ofTexture colorTex;
-	colorTex.allocate(c.cols, c.rows, GL_RGB);
-	colorTex.loadData(c.ptr(), c.cols, c.rows, GL_RGB);
-	
-
 	//depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
 	ofPushMatrix();
 	ofTranslate(-depthTex.getWidth() / 2, -depthTex.getHeight() / 2, 0);
@@ -230,6 +195,7 @@ void testApp::setupScene()
 
 	// front
 	camFront.scale = 200;
+	camFront.tilt(-180);
 	cameras[1] = &camFront;
 
 	// top
@@ -315,7 +281,10 @@ void testApp::draw(){
 	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), viewMain.x + 20, 110);
 	ofDrawBitmapString(ofToString(nodeSwarm.size()), viewMain.x + 20, 130);
-
+	for (int i = 0; i < outputStrings.size(); i++)
+	{
+		ofDrawBitmapString(outputStrings[i], viewMain.x + 20, 150 + 20 * i);
+	}
 
 
 	ofDrawBitmapString("EasyCam",   viewGrid[0].x + 20, viewGrid[0].y + 30);
@@ -521,14 +490,94 @@ void testApp::keyPressed(int key){
 	}
 
 }
-
+	
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 	setupViewports();
 }
 
+
+void testApp::updateMats()
+{
+	ofPtr<ofPixels> colorPixels = colorStream.getPixels();
+	colorMat = ofxCv::toCv(*colorPixels);
+
+	ofPtr<ofShortPixels> depthPixels = depthStream.getPixels();
+	depthMat = ofxCv::toCv(*depthPixels);
+}
+
+void testApp::allocateTextures()
+{
+	depthTex.allocate(depthMat.cols, depthMat.rows, GL_LUMINANCE);
+	colorTex.allocate(colorMat.cols, colorMat.rows, GL_RGB);
+}
+
 void testApp::update()
 {
+	outputStrings.clear();
+	updateMats();
+	cvProcess();
+}
 
+void testApp::cvProcess()
+{
+	using namespace cv;
+
+	Mat c = colorMat.clone();
+	Mat m = depthMat.clone();
+	//	resize(m, m, cv::Size(), 3, 3, CV_INTER_CUBIC);
+
+	ofxUIRangeSlider* r = (ofxUIRangeSlider*)gui1->getWidget("RSLIDER");		
+
+	Mat depthMask = (m > r->getScaledValueLow() &  m < r->getScaledValueHigh());
+	Mat invertDepthMask;
+	cv::bitwise_not(depthMask, invertDepthMask);
+
+	m.setTo(0, invertDepthMask);
+	cv::Mat m8;	m.convertTo(m8, CV_8UC1, 0.25);
+
+	cf.findContours(m8);
+
+	for (int i = 0; i < cf.size(); i++)
+	{
+		double area = cf.getContourArea(i);
+		if (area < 1000) continue;
+		cv::Point2f C = cf.getCenter(i);
+
+		ofPolyline pln = cf.getPolyline(i);
+		ofPolyline plsm = pln.getSmoothed(10);
+		ofPolyline plc = pln.getResampledByCount(30);
+
+		vector<ofPoint> pts = plc.getVertices();
+		for (int pi = 0; pi < pts.size(); pi++)
+		{
+			ofPoint p = pts[pi];
+			ofVec2f va(p.x - C.x, p.y - C.y);
+			float a = va.angle(ofVec2f());
+			float s = va.length();
+			outputStrings.push_back(ofToString(a) + ofToString(s));
+
+
+		}
+
+
+		const ofPolyline& pl = plc;
+		for (int j = 1; j < pl.size(); j++)
+		{
+			cv::line(m8, cv::Point2d(pl[j-1].x, pl[j-1].y), cv::Point2d(pl[j].x, pl[j].y), cvScalarAll(0), 1);
+			cv::line(m8, cv::Point2d(pl[j-1].x, pl[j-1].y), cv::Point2d(pl[j].x, pl[j].y), cvScalarAll(255), 1);
+		}
+
+
+		outputStrings.push_back("Bird #" + ofToString(i));
+		outputStrings.push_back(ofToString(area));
+		cv::line(m8, C, cf.getCentroid(i), cvScalarAll(0), 3);
+		cv::line(m8, C, cf.getCentroid(i), cvScalarAll(255), 2);
+
+	}
+
+
+	depthTex.loadData(m8.ptr(), m8.cols, m8.rows, GL_LUMINANCE);
+	colorTex.loadData(c.ptr(), c.cols, c.rows, GL_RGB);
 }
 
