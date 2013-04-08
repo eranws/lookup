@@ -26,7 +26,7 @@ protected:
 	void update();
 
 	// objects
-	vector<Bird> particles;
+	vector<ofPtr<Bird> > particles;
 
 	vector <ofImage> images;
 

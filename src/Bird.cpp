@@ -24,3 +24,21 @@ Bird::Bird(int positionDispersion, int velocityDispersion)
 Bird::~Bird(void)
 {
 }
+
+void Bird::customDraw()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		wings[i].draw();
+	}
+}
+
+void Bird::setup()
+{
+	wings[1].setScale(1, -1, 1);
+	for (int i = 0; i < 2; i++)
+	{
+		wings[i].setParent(*this);
+		wings[i].move(10, 0, 0);
+	}
+}

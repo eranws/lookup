@@ -42,7 +42,9 @@ void swarm::init(float positionDispersion, float velocityDispersion){
 void swarm::addParticle(int nParticles)
 {
 	for (int i = 0; i < nParticles; i++){
-		particles.push_back(Bird(_positionDispersion, _velocityDispersion));
+		Bird* b = new Bird(_positionDispersion, _velocityDispersion);
+		b->setup();
+		particles.push_back(ofPtr<Bird>(b));
 	}
 }
 
@@ -60,29 +62,30 @@ void swarm::customDraw(){
 	//  light.
 	ofPushStyle();
 	light.enable();
-	light.setPosition(particles[0].getGlobalPosition());
+	light.setPosition(particles[0]->getGlobalPosition());
 
 	for(int i = 0; i < particles.size(); i++){
 		ofPushStyle();
-		ofSetColor(particles[i].color);
-		ofSphere(particles[i].getGlobalPosition(), 1.0);
-		ofDrawArrow(particles[i].getGlobalPosition(), particles[i].getGlobalPosition() + particles[i].velocity);
+		particles[i]->draw();
+		ofSetColor(particles[i]->color);
+		ofSphere(particles[i]->getGlobalPosition(), 1.0);
+		ofDrawArrow(particles[i]->getGlobalPosition(), particles[i]->getGlobalPosition() + particles[i]->velocity);
 
 		ofPushMatrix();
-		ofTranslate(particles[i].getGlobalPosition());
+		ofTranslate(particles[i]->getGlobalPosition());
 		
 		ofScale(0.1, 0.1);
 
-		int frameIndex = ofGetFrameNum() - particles[i].animationFrameStart; //fix animation not starting in 0;
-		int animationCounter = (frameIndex + particles[i].birth) / images.size();
+		int frameIndex = ofGetFrameNum() - particles[i]->animationFrameStart; //fix animation not starting in 0;
+		int animationCounter = (frameIndex + particles[i]->birth) / images.size();
 		ofDrawBitmapString(ofToString(animationCounter), 0, 0, 0);
 		int glidingFactor = 10; //flap wings each X times
-		if ((animationCounter + particles[i].glideFrameStart) % glidingFactor > 0) frameIndex = particles[i].animationFrameStart;
+		if ((animationCounter + particles[i]->glideFrameStart) % glidingFactor > 0) frameIndex = particles[i]->animationFrameStart;
 
 		// draw the image sequence at the new frame count
 		ofSetColor(255);
 
-		ofRotateZ(atan2f(particles[i].velocity.y, particles[i].velocity.x) * RAD_TO_DEG);
+		ofRotateZ(atan2f(particles[i]->velocity.y, particles[i]->velocity.x) * RAD_TO_DEG);
 		images[frameIndex % images.size()].draw(0, 0);
 		ofPopMatrix();
 
@@ -102,7 +105,7 @@ void swarm::customDraw(){
 	ofSetColor(255, 255, 255);
 	ofSphere(light.getPosition(), 2.0);
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL);
-	ofDrawBitmapString(" light", particles[0].getGlobalPosition());
+	ofDrawBitmapString(" light", particles[0]->getGlobalPosition());
 	ofPopStyle();
 }
 
@@ -133,7 +136,7 @@ void swarm::update(){
 		//
 
 		// (velcotity is taken from previous frame)
-		particles[i].move(particles[i].velocity * dt);
+		particles[i]->move(particles[i]->velocity * dt);
 
 
 
@@ -149,19 +152,19 @@ void swarm::update(){
 		//  v = v + (dt * a)
 		//  v = v + (dt * -k * x)
 		//
-		particles[i].velocity += -SPRING_CONSTANT * particles[i].getGlobalPosition() * dt;
+		particles[i]->velocity += -SPRING_CONSTANT * particles[i]->getGlobalPosition() * dt;
 
 
 		// [3] to get a super simple kind of 'flocking' behaviour
 		//  we add a second spring force to velocity relative
 		//  to the position of the light
 		// NOTICE: THIS ISN'T REAL FLOCKING!
-		particles[i].velocity += -SPRING_CONSTANT * (particles[i].getGlobalPosition() - light.getPosition()) * dt;
+		particles[i]->velocity += -SPRING_CONSTANT * (particles[i]->getGlobalPosition() - light.getPosition()) * dt;
 
 
 		// [4] Force a maximum velocity
-		if(particles[i].velocity.length() > MAX_VELOCITY){
-			particles[i].velocity /= particles[i].velocity.length() * MAX_VELOCITY;
+		if(particles[i]->velocity.length() > MAX_VELOCITY){
+			particles[i]->velocity /= particles[i]->velocity.length() * MAX_VELOCITY;
 		}
 
 		//
