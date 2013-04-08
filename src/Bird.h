@@ -7,8 +7,7 @@ public:
 	
 	Bird(int positionDispersion, int velocityDispersion);
 	~Bird();
-
-	ofVec3f position;
+	
 	ofVec3f velocity;
 	ofColor color;
 

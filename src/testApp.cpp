@@ -52,7 +52,7 @@ void testApp::drawVideo(){
 	depthTex.draw(0, 0, -0.1);
 	cf.draw();
 	//cf.getPolyline(0).draw();
-	colorTex.draw(0 ,0, -1);
+	colorTex.draw(0 ,0, 1);
 	ofPopMatrix();
 
 	/*
@@ -95,7 +95,7 @@ void testApp::setupGui()
 
 	gui1->addWidgetDown(new ofxUILabel("Depth Cutoff", OFX_UI_FONT_MEDIUM)); 
 	gui1->addRangeSlider("RSLIDER", 0.0, 10000.0, 450.0, 2000.0, length-xInit,dim);
-
+	gui1->addSlider("colorThreshold", 1, 255, 10, length-xInit,dim);
 	gui1->addSpacer(length-xInit, 2);
 	vector<string> depthModes = depthStream.getVideoModesString();
 	//gui1->addRadio("RADIO HORIZONTAL", names, OFX_UI_ORIENTATION_HORIZONTAL, dim, dim); 
@@ -548,7 +548,7 @@ void testApp::cvProcess()
 		ofPolyline plsm = pln.getSmoothed(10);
 		ofPolyline plc = pln.getResampledByCount(30);
 
-		vector<ofPoint> pts = plc.getVertices();
+		vector<ofPoint> pts = plsm.getVertices();
 		for (int pi = 0; pi < pts.size(); pi++)
 		{
 			ofPoint p = pts[pi];
@@ -561,7 +561,7 @@ void testApp::cvProcess()
 		}
 
 
-		const ofPolyline& pl = plc;
+		const ofPolyline& pl = plsm;
 		for (int j = 1; j < pl.size(); j++)
 		{
 			cv::line(m8, cv::Point2d(pl[j-1].x, pl[j-1].y), cv::Point2d(pl[j].x, pl[j].y), cvScalarAll(0), 1);
@@ -576,8 +576,22 @@ void testApp::cvProcess()
 
 	}
 
+//	m8 = 255 - m8; //black shadow
+		
+	cv::morphologyEx(m8, m8, CV_MOP_DILATE, cv::getStructuringElement(CV_SHAPE_ELLIPSE, cv::Size(11, 11)));
 
+	Mat c2 = c.clone();
+	c2.setTo(255);
+
+	ofxUISlider* s = (ofxUISlider*)gui1->getWidget("colorThreshold");
+	cvtColor(c, c, CV_RGB2GRAY);
+	c = c > s->getScaledValue();
+	cvtColor(c, c, CV_GRAY2RGB);
+	imshow("c2",c);
+	waitKey(1);
+
+	c.copyTo(c2, m8);
 	depthTex.loadData(m8.ptr(), m8.cols, m8.rows, GL_LUMINANCE);
-	colorTex.loadData(c.ptr(), c.cols, c.rows, GL_RGB);
+	colorTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_RGB);
 }
 

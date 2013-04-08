@@ -4,9 +4,7 @@
 Bird::Bird(int positionDispersion, int velocityDispersion)
 {
 	//
-		position.x = (ofRandom(1.0f) - 0.5f)  * positionDispersion; //TODO: make member
-		position.y = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
-		position.z = (ofRandom(1.0f) - 0.5f)  * positionDispersion;
+		setGlobalPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f)) * positionDispersion); //TODO: make member
 
 		velocity.x = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10; //TODO: make member
 		velocity.y = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10;
