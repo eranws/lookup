@@ -6,7 +6,7 @@ vector <ofImage> Bird::images;
 Bird::Bird(int positionDispersion, int velocityDispersion)
 {
 	//
-		setGlobalPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f)) * positionDispersion); //TODO: make member
+		setPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f)) * positionDispersion); //TODO: make member
 
 		velocity.x = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10; //TODO: make member
 		velocity.y = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10;
@@ -29,19 +29,23 @@ Bird::~Bird(void)
 
 void Bird::customDraw()
 {
+	update();
+
 	ofPushStyle();
 	ofSetColor(color);
+	setGlobalOrientation(ofQuaternion(atan2f(velocity.y, velocity.x) * RAD_TO_DEG, ofVec3f(0,0,1)));
 
 	for (int i = 0; i < 2; i++)
 	{
 		wings[i].draw();
 	}
 
-	ofSphere(1.0);
-	ofDrawArrow(ofPoint(), velocity);
+	ofSphere(5.0);
+	ofDrawArrow(ofVec3f(), ofVec3f(1, 0, 0) * 10, 1);
+	//ofDrawArrow(ofPoint(), velocity);
 
 
-	int frameIndex = ofGetFrameNum() - animationFrameStart; //fix animation not starting in 0;
+	//int frameIndex = ofGetFrameNum() - animationFrameStart; //fix animation not starting in 0;
 	//int animationCounter = (frameIndex + particles[i]->birth) / images.size();
 	//ofDrawBitmapString(ofToString(animationCounter), 0, 0, 0);
 	//int glidingFactor = 10; //flap wings each X times
@@ -50,27 +54,43 @@ void Bird::customDraw()
 	// draw the image sequence at the new frame count
 	//ofSetColor(255);
 
+	/*
 	ofPushMatrix();
 	ofScale(0.1, 0.1);
-	ofRotateZ(atan2f(velocity.y, velocity.x) * RAD_TO_DEG);
 	images[frameIndex % images.size()].draw(0, 0);
 	ofPopMatrix();
+	*/
 
 
 	ofPopStyle();
 
 }
 
+
+void Bird::update(){
+
+const float SPRING_CONSTANT = 0.1f;
+const float MAX_VELOCITY = 30.0f;
+
+	// Calculate time past per frame
+	float dt = ofGetLastFrameTime();
+	move(velocity * dt);
+	velocity += -SPRING_CONSTANT * getPosition() * dt;
+	velocity.limit(MAX_VELOCITY);
+}
+
+
 void Bird::setup()
 {
 	for (int i = 0; i < 2; i++)
 	{
-		wings[i].setParent(*this);
+		//wings[i].setParent(*this);
 	}
-	wings[0].move(10, 0, 0);
-	wings[1].move(-10, 0, 0);
+	wings[0].setPosition(-2, 5, 0);
+	wings[1].setPosition(-2, -5, 0);
 
 }
+
 
 void Bird::initImages()
 {

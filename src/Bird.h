@@ -6,7 +6,7 @@ class Wing : public ofNode
 {
 	virtual void customDraw()
 	{
-		ofSphere(1.0);
+		ofSphere(2.0);
 	}
 };
 
@@ -21,6 +21,8 @@ public:
 
 	void setup();
 	virtual void customDraw();
+	void update();
+	
 	ofVec3f velocity;
 	ofColor color;
 
