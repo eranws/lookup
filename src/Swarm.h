@@ -28,8 +28,6 @@ protected:
 	// objects
 	vector<ofPtr<Bird> > particles;
 
-	vector <ofImage> images;
-
 	float _positionDispersion;
 	float _velocityDispersion;
 

@@ -1,11 +1,12 @@
 #pragma once
-#include "ofNode.h"
+#include "ofMain.h"
+#include "ofImage.h"
 
 class Wing : public ofNode
 {
 	virtual void customDraw()
 	{
-		ofSphere(getPosition(), 1.0);
+		ofSphere(1.0);
 	}
 };
 
@@ -16,6 +17,8 @@ public:
 	Bird(int positionDispersion, int velocityDispersion);
 	~Bird();
 	
+	static void initImages();
+
 	void setup();
 	virtual void customDraw();
 	ofVec3f velocity;
@@ -26,5 +29,8 @@ public:
 	int animationFrameStart;
 	int glideFrameStart;
 	int birth;
+
+	static vector <ofImage> images;
+
 };
 

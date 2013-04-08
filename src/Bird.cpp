@@ -1,5 +1,7 @@
 #include "Bird.h"
+#include "ofImage.h"
 
+vector <ofImage> Bird::images;
 
 Bird::Bird(int positionDispersion, int velocityDispersion)
 {
@@ -27,18 +29,66 @@ Bird::~Bird(void)
 
 void Bird::customDraw()
 {
+	ofPushStyle();
+	ofSetColor(color);
+
 	for (int i = 0; i < 2; i++)
 	{
 		wings[i].draw();
 	}
+
+	ofSphere(1.0);
+	ofDrawArrow(ofPoint(), velocity);
+
+
+	int frameIndex = ofGetFrameNum() - animationFrameStart; //fix animation not starting in 0;
+	//int animationCounter = (frameIndex + particles[i]->birth) / images.size();
+	//ofDrawBitmapString(ofToString(animationCounter), 0, 0, 0);
+	//int glidingFactor = 10; //flap wings each X times
+	//if ((animationCounter + particles[i]->glideFrameStart) % glidingFactor > 0) frameIndex = particles[i]->animationFrameStart;
+
+	// draw the image sequence at the new frame count
+	//ofSetColor(255);
+
+	ofPushMatrix();
+	ofScale(0.1, 0.1);
+	ofRotateZ(atan2f(velocity.y, velocity.x) * RAD_TO_DEG);
+	images[frameIndex % images.size()].draw(0, 0);
+	ofPopMatrix();
+
+
+	ofPopStyle();
+
 }
 
 void Bird::setup()
 {
-	wings[1].setScale(1, -1, 1);
 	for (int i = 0; i < 2; i++)
 	{
 		wings[i].setParent(*this);
-		wings[i].move(10, 0, 0);
+	}
+	wings[0].move(10, 0, 0);
+	wings[1].move(-10, 0, 0);
+
+}
+
+void Bird::initImages()
+{
+	ofDirectory dir;
+	//int nFiles = dir.listDir("plops");
+	int nFiles = dir.listDir("PNG_yellow_new");
+
+	if(nFiles) {        
+		for(int i=0; i<dir.numFiles(); i++) { 
+			// add the image to the vector
+			string filePath = dir.getPath(i);
+			images.push_back(ofImage());
+			images.back().loadImage(filePath);
+		}
+
+		for(int i = 0; i < dir.numFiles(); i++) {
+			images[i].setAnchorPercent(0.5f, 0.5f);
+			images[i].rotate90(2);
+		}
 	}
 }

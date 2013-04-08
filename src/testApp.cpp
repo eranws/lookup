@@ -41,6 +41,8 @@ void testApp::setup(){
 	gui1->setVisible(false);
 
 	cf.setAutoThreshold(false);
+
+	Bird::initImages();
 }
 
 
