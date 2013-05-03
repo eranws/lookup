@@ -216,7 +216,7 @@ void testApp::setupScene()
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
 	nodeSwarm.init(100, 5);
-	nodeSwarm.addParticle(5);
+	nodeSwarm.addParticle(1);
 }
 
 void testApp::setupViewports(bool sideViews){

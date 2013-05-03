@@ -1,13 +1,11 @@
 #pragma once
 #include "ofMain.h"
 #include "ofImage.h"
+#include "ofxXmlSettings.h"
 
 class Wing : public ofNode
 {
-	virtual void customDraw()
-	{
-		ofSphere(2.0);
-	}
+	virtual void customDraw();
 };
 
 class Bird : public ofNode
