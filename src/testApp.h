@@ -35,7 +35,7 @@ private:
 		void guiEvent(ofxUIEventArgs &e);
 		void setupScene();
 
-		void setupViewports();
+		void setupViewports(bool sideViews = true);
 		void drawScene(int iCameraDraw);
 		void updateMouseRay();
 

@@ -6,6 +6,9 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
+	toDrawVideo = true;
+	toDrawSideViewports = false;
+
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("LookUp!");
 	ofBackground(70, 70, 70);
@@ -37,7 +40,6 @@ void testApp::setup(){
 	setupGui(); 
 	setupScene();
 
-	toDrawVideo = true;
 	gui1->setVisible(false);
 
 	cf.setAutoThreshold(false);
@@ -210,28 +212,38 @@ void testApp::setupScene()
 	camLeft.pan(-90);
 	cameras[3] = &camLeft;
 
-	setupViewports();
+	setupViewports(toDrawSideViewports);
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
 	nodeSwarm.init(100, 5);
 	nodeSwarm.addParticle(5);
 }
 
-void testApp::setupViewports(){
-	float xOffset = ofGetWidth() / 3;
-	float yOffset = ofGetHeight() / N_CAMERAS;
+void testApp::setupViewports(bool sideViews){
+	if (sideViews)
+	{
+		float xOffset = ofGetWidth() / 3;
+		float yOffset = ofGetHeight() / N_CAMERAS;
 
-	viewMain.x = xOffset;
-	viewMain.y = 0;
-	viewMain.width = xOffset * 2;
-	viewMain.height = ofGetHeight();
+		viewMain.x = xOffset;
+		viewMain.y = 0;
+		viewMain.width = xOffset * 2;
+		viewMain.height = ofGetHeight();
 
-	for(int i = 0; i < N_CAMERAS; i++){
+		for(int i = 0; i < N_CAMERAS; i++){
 
-		viewGrid[i].x = 0;
-		viewGrid[i].y = yOffset * i;
-		viewGrid[i].width = xOffset;
-		viewGrid[i].height = yOffset;
+			viewGrid[i].x = 0;
+			viewGrid[i].y = yOffset * i;
+			viewGrid[i].width = xOffset;
+			viewGrid[i].height = yOffset;
+		}
+	}
+	else
+	{
+		viewMain.x = 0;
+		viewMain.y = 0;
+		viewMain.width = ofGetWidth();
+		viewMain.height = ofGetHeight();
 	}
 }
 
@@ -239,12 +251,16 @@ void testApp::setupViewports(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	glDisable(GL_DEPTH_TEST);
-	ofPushStyle();
-	ofSetColor(100, 100, 100);
-	ofRect(viewGrid[iMainCamera]);
-	ofPopStyle();
-	glEnable(GL_DEPTH_TEST);
+
+	if (toDrawSideViewports)
+	{
+		glDisable(GL_DEPTH_TEST);
+		ofPushStyle();
+		ofSetColor(100, 100, 100);
+		ofRect(viewGrid[iMainCamera]);
+		ofPopStyle();
+		glEnable(GL_DEPTH_TEST);
+	}
 
 	// draw main viewport
 	cameras[iMainCamera]->begin(viewMain);
@@ -276,34 +292,40 @@ void testApp::draw(){
 	glDepthFunc(GL_ALWAYS); // draw on top of everything
 
 	// draw some labels
-	ofSetColor(255, 255, 255);
-	ofDrawBitmapString("Press keys 1-4 to select a camera for main view", viewMain.x + 20, 30);
-	ofDrawBitmapString("Camera selected: " + ofToString(iMainCamera + 1), viewMain.x + 20, 50);
-	ofDrawBitmapString("Press 'f' to toggle fullscreen", viewMain.x + 20, 70);
-	ofDrawBitmapString("Press 'p' to toggle parents on OrthoCamera's", viewMain.x + 20, 90);
-	ofDrawBitmapString(ofToString(ofGetFrameRate()), viewMain.x + 20, 110);
-	ofDrawBitmapString(ofToString(nodeSwarm.size()), viewMain.x + 20, 130);
+	outputStrings.push_back("Press keys 1-4 to select a camera for main view");
+	outputStrings.push_back("Camera selected: " + ofToString(iMainCamera + 1));
+	outputStrings.push_back("Press 'f' to toggle fullscreen");
+	outputStrings.push_back("Press 'p' to toggle parents on OrthoCamera's");
+	outputStrings.push_back(ofToString(ofGetFrameRate()));
+	outputStrings.push_back(ofToString(nodeSwarm.size()));
+
 	for (int i = 0; i < outputStrings.size(); i++)
 	{
-		ofDrawBitmapString(outputStrings[i], viewMain.x + 20, 150 + 20 * i);
+		ofSetColor(0, 0, 0); //shadow effect
+		ofDrawBitmapString(outputStrings[i], viewMain.x + 20 - 1, viewMain.y + 30 -1 + 20 * i);
+		ofSetColor(255, 255, 255);
+		ofDrawBitmapString(outputStrings[i], viewMain.x + 20, viewMain.y + 30 + 20 * i);
 	}
 
 
-	ofDrawBitmapString("EasyCam",   viewGrid[0].x + 20, viewGrid[0].y + 30);
-	ofDrawBitmapString("Front",     viewGrid[1].x + 20, viewGrid[1].y + 30);
-	ofDrawBitmapString("Top",       viewGrid[2].x + 20, viewGrid[2].y + 30);
-	ofDrawBitmapString("Left",      viewGrid[3].x + 20, viewGrid[3].y + 30);
+	if (toDrawSideViewports)
+	{
+		ofDrawBitmapString("EasyCam",   viewGrid[0].x + 20, viewGrid[0].y + 30);
+		ofDrawBitmapString("Front",     viewGrid[1].x + 20, viewGrid[1].y + 30);
+		ofDrawBitmapString("Top",       viewGrid[2].x + 20, viewGrid[2].y + 30);
+		ofDrawBitmapString("Left",      viewGrid[3].x + 20, viewGrid[3].y + 30);
 
-	// draw outlines on views
-	ofSetLineWidth(5);
-	ofNoFill();
-	ofSetColor(255, 255, 255);
-	//
-	for(int i = 0; i < N_CAMERAS; i++){
-		ofRect(viewGrid[i]);
+		// draw outlines on views
+		ofSetLineWidth(5);
+		ofNoFill();
+		ofSetColor(255, 255, 255);
+
+		for(int i = 0; i < N_CAMERAS; i++)
+		{
+			ofRect(viewGrid[i]);
+		}
+		ofRect(viewMain);
 	}
-	//
-	ofRect(viewMain);
 
 	// restore the GL depth function
 	glDepthFunc(GL_LESS);
@@ -459,9 +481,10 @@ void testApp::keyPressed(int key){
 			iMainCamera = key - '1';
 			break;
 
-	case 'f': ofToggleFullscreen(); break;
+	case 'f': ofToggleFullscreen(); setupViewports(toDrawSideViewports); break;
 	case 'g': gui1->toggleVisible(); break;
 	case 'd': toDrawVideo = !toDrawVideo; break; //TODO: update gui
+	case 'v': toDrawSideViewports = !toDrawSideViewports; setupViewports(toDrawSideViewports); break;
 
 	case 'p':
 		if(bCamParent){
@@ -495,7 +518,7 @@ void testApp::keyPressed(int key){
 	
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-	setupViewports();
+	setupViewports(toDrawSideViewports);
 }
 
 
@@ -557,9 +580,7 @@ void testApp::cvProcess()
 			ofVec2f va(p.x - C.x, p.y - C.y);
 			float a = va.angle(ofVec2f());
 			float s = va.length();
-			outputStrings.push_back(ofToString(a) + ofToString(s));
-
-
+			//outputStrings.push_back(ofToString(a) + ofToString(s));
 		}
 
 
