@@ -44,7 +44,6 @@ void testApp::setup(){
 
 	cf.setAutoThreshold(false);
 
-	Bird::initImages();
 }
 
 

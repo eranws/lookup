@@ -8,8 +8,7 @@ swarm::swarm(){
 }
 
 void swarm::init(float positionDispersion, float velocityDispersion){
-
-	
+	Bird::initImages();
 
 	// Check if we've already initialised
 	if(particles.size() != 0){

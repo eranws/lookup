@@ -10,14 +10,6 @@ string filenames[] = {
 	"wing_2_R_mc.png",
 	"wing_1_L_mc.png",
 	"wing_2_L_mc.png",
-//	"wing_2_R_mc.png",
-//	"wing_2_R_mc.png",
-//	"wing_2_R_mc.png",
-//	"wing_1_L_mc.png",
-//	"wing_1_R_mc.png",
-
-//	"wing_all_L_mc.png",
-//	"wing_all_R_mc.png"
 };
 
 float xPos[] = {
@@ -30,11 +22,11 @@ float yPos[] = {
 
 
 float xRot[] = {
-	0,	127.4,	67.8,	109.25,	67.8,	-87
+	0,	127.4,	67.8,	109.25,	67.8,	000
 };
 
 float yRot[] = {
-	0,	-25.35,	-43.2,	-71.85,	-5.3,	-213.65
+	0,	-25.35,	-43.2,	-71.85,	-5.3,	000
 };
 
 
@@ -42,13 +34,13 @@ Bird::Bird(int positionDispersion, int velocityDispersion)
 {
 	//
 	
-	/*
+	
 	setPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f)) * positionDispersion); //TODO: make member
 
 		velocity.x = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10; //TODO: make member
 		velocity.y = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10;
 		velocity.z = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
-		*/
+		
 
 		color.r = ofRandom(255.0f);
 		color.g = ofRandom(255.0f);
@@ -65,21 +57,29 @@ Bird::~Bird(void)
 {
 }
 
+const int BodyOffsetX = -138/2 - 30;
 void Bird::customDraw()
 {
-	//update();
+	update();
+	ofSetColor(255);
+	ofSphere(5.0);
+	ofDrawArrow(ofVec3f(), ofVec3f(1, 0, 0) * 10, 1);
 
 	ofPushStyle();
 	ofSetColor(color);
-	//setGlobalOrientation(ofQuaternion(atan2f(velocity.y, velocity.x) * RAD_TO_DEG, ofVec3f(0,0,1)));
+
+	//ofTranslate(-138/2 - 30, -53/2);//png size, -30 shift center of mass towards tail
+	ofRotateZ(atan2f(velocity.y, velocity.x) * RAD_TO_DEG + 180);
+//	setOrientation(ofQuaternion(atan2f(velocity.y, velocity.x) * RAD_TO_DEG + 180, ofVec3f(0,0,1)));
+	images[0].draw(BodyOffsetX, -53/2);
+	//images[0].draw(0, 0);
 
 	for (int i = 0; i < 2; i++)
 	{
 		wings[i].draw();
 	}
+	tail.draw();
 
-	ofSphere(5.0);
-	ofDrawArrow(ofVec3f(), ofVec3f(1, 0, 0) * 10, 1);
 	//ofDrawArrow(ofPoint(), velocity);
 
 
@@ -90,17 +90,6 @@ void Bird::customDraw()
 	//if ((animationCounter + particles[i]->glideFrameStart) % glidingFactor > 0) frameIndex = particles[i]->animationFrameStart;
 
 	// draw the image sequence at the new frame count
-	//ofSetColor(255);
-
-	
-	ofPushMatrix();
-//	ofScale(1, 1);
-	for (int i = 0; i < images.size(); i++)
-	{
-		images[i].draw(xPos[i], yPos[i], -i);
-	}
-	ofPopMatrix();
-	
 
 	ofPopStyle();
 
@@ -122,12 +111,23 @@ const float MAX_VELOCITY = 30.0f;
 
 void Bird::setup()
 {
-	for (int i = 0; i < 2; i++)
-	{
-		//wings[i].setParent(*this);
-	}
-	wings[0].setPosition(-2, 5, 0);
-	wings[1].setPosition(-2, -5, 0);
+//	ofTranslate(-138/3, -53/2);//png size
+
+	wings[0].setPosition(51 + BodyOffsetX, -10, 0);
+	wings[0].setImage(images[2]);
+	wings[0].setImageOffset(ofPoint(0, 35-100, -1));
+	wings[0].setRotationFactor(0.2, 10);
+
+	wings[1].setPosition(51 + BodyOffsetX, 10, 0);
+	wings[1].setImage(images[4]);
+	wings[1].setImageOffset(ofPoint(0, -35, -1));
+	wings[1].setRotationFactor(0.2, -10);
+
+
+	tail.setPosition(122 + BodyOffsetX, 0, 0);
+	tail.setImage(images[1]);
+	tail.setImageOffset(ofPoint(-3, -34, -2));
+	tail.setRotationFactor(0.1, 30);
 
 }
 
@@ -162,7 +162,9 @@ void Bird::initImages()
 			images.back().loadImage(filePath);
 			//images.back().setAnchorPoint(xRot[i], yRot[i]);
 			images.back().resetAnchor();
-//			images.back().setAnchorPoint(xRot[i], yRot[i]);
+//			images.back().setAnchorPoint(100*xRot[i], yRot[i]);
+//			images.back().setAnchorPercent(0.5f, 0.5f);
+
 //			images[i].rotate90(2);
 	}
 
@@ -171,5 +173,25 @@ void Bird::initImages()
 
 void Wing::customDraw()
 {
-	ofSphere(2.0);
+	ofBox(5);
+	setOrientation(ofQuaternion(sinf(_rotationFreq * float(ofGetFrameNum())) * _rotationMag, getZAxis()));
+	_image.draw(_imgOffset);
+}
+
+void Wing::setImage( const ofImage& image )
+{
+	_image = image;
+}
+
+void Wing::setImageOffset( const ofPoint offset)
+{
+	_imgOffset = offset;
+}
+
+void Wing::setRotationFactor( float freq ,float mag )
+//TODO: change to 3rd order polynom formula
+{
+	_rotationFreq	= freq;
+	_rotationMag	= mag;
+
 }
