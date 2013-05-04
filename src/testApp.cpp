@@ -628,13 +628,11 @@ void testApp::cvProcess()
 
 	}
 
-	m8 = 255 - m8; //black shadow
+	//m8 = 255 - m8; //black shadow
 		
 	cv::morphologyEx(m8, m8, CV_MOP_DILATE, cv::getStructuringElement(CV_SHAPE_ELLIPSE, cv::Size(11, 11)));
 
-	Mat c2 = c.clone();
-	c2.setTo(255);
-
+	
 	ofxUISlider* s = (ofxUISlider*)gui1->getWidget("colorThreshold");
 	cvtColor(c, c, CV_RGB2GRAY);
 	c = c > s->getScaledValue();
@@ -642,6 +640,8 @@ void testApp::cvProcess()
 	imshow("c2",c);
 	waitKey(1);
 
+	Mat c2 = c.clone();
+	c2.setTo(255);
 	c.copyTo(c2, m8);
 	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_RGB);
 	
