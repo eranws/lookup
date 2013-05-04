@@ -7,7 +7,9 @@
 void testApp::setup(){
 
 	toDrawVideo = true;
+	toDrawScene = false;
 	toDrawSideViewports = false;
+	showHelpText = true;
 
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("LookUp!");
@@ -52,6 +54,8 @@ void testApp::drawVideo2D(){
 
 
 void testApp::drawVideo(){
+	if (!toDrawVideo)
+		return;
 	
 	//depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
 	ofPushMatrix();
@@ -102,7 +106,7 @@ void testApp::setupGui()
 
 	gui1->addWidgetDown(new ofxUILabel("Depth Cutoff", OFX_UI_FONT_MEDIUM)); 
 	gui1->addRangeSlider("RSLIDER", 0.0, 10000.0, 450.0, 2000.0, length-xInit,dim);
-	gui1->addSlider("colorThreshold", 1, 255, 10, length-xInit,dim);
+	gui1->addSlider("colorThreshold", 1, 255, 200, length-xInit,dim);
 	gui1->addSpacer(length-xInit, 2);
 	vector<string> depthModes = depthStream.getVideoModesString();
 	//gui1->addRadio("RADIO HORIZONTAL", names, OFX_UI_ORIENTATION_HORIZONTAL, dim, dim); 
@@ -128,10 +132,11 @@ void testApp::setupGui()
 	//gui1->addWidgetDown(new ofxUILabel("BUTTONS", OFX_UI_FONT_MEDIUM)); 
 	//gui1->addButton("DRAW GRID", false, dim, dim);
 	gui1->addWidgetDown(new ofxUILabel("TOGGLES", OFX_UI_FONT_MEDIUM)); 
-	gui1->addToggle( "Draw Grid", &toDrawGrid, dim, dim);
 	gui1->addToggle( "Draw Video", &toDrawVideo, dim, dim);
+	gui1->addToggle( "Draw Grid", &toDrawGrid, dim, dim);
+	gui1->addToggle( "Draw Scene", &toDrawScene, dim, dim);
 	gui1->addToggle( "Draw Side Viewports", &toDrawSideViewports, dim, dim);
-
+	
 	
 	
 	
@@ -298,21 +303,18 @@ void testApp::draw(){
 	glDepthFunc(GL_ALWAYS); // draw on top of everything
 
 	// draw some labels
-	outputStrings.push_back("Press keys 1-4 to select a camera for main view");
-	outputStrings.push_back("Camera selected: " + ofToString(iMainCamera + 1));
-	outputStrings.push_back("Press 'f' to toggle fullscreen");
-	outputStrings.push_back("Press 'p' to toggle parents on OrthoCamera's");
-	outputStrings.push_back(ofToString(ofGetFrameRate()));
 	outputStrings.push_back(ofToString(nodeSwarm.size()));
 
-	for (int i = 0; i < outputStrings.size(); i++)
+	if(showHelpText)
 	{
-		ofSetColor(0, 0, 0); //shadow effect
-		ofDrawBitmapString(outputStrings[i], viewMain.x + 20 - 1, viewMain.y + 30 -1 + 20 * i);
-		ofSetColor(255, 255, 255);
-		ofDrawBitmapString(outputStrings[i], viewMain.x + 20, viewMain.y + 30 + 20 * i);
+		for (int i = 0; i < outputStrings.size(); i++)
+		{
+			ofSetColor(0, 0, 0); //shadow effect
+			ofDrawBitmapString(outputStrings[i], viewMain.x + 20 - 1, viewMain.y + 30 -1 + 20 * i);
+			ofSetColor(255, 255, 255);
+			ofDrawBitmapString(outputStrings[i], viewMain.x + 20, viewMain.y + 30 + 20 * i);
+		}
 	}
-
 
 	if (toDrawSideViewports)
 	{
@@ -339,10 +341,14 @@ void testApp::draw(){
 }
 
 void testApp::drawScene(int iCameraDraw){
+	if (!toDrawScene)
+		return;
 
 	nodeSwarm.draw();
-	if (toDrawGrid) nodeGrid.draw();
-
+	if (toDrawGrid)
+	{
+		nodeGrid.draw();
+	}
 	//--
 	// Draw frustum preview for ofEasyCam camera
 
@@ -457,11 +463,8 @@ void testApp::drawScene(int iCameraDraw){
 		ofPopStyle();
 	}
 
-	if (toDrawVideo)
-	{
-		drawVideo();
-	}
-
+	drawVideo();
+	
 }
 
 //--------------------------------------------------------------
@@ -491,6 +494,8 @@ void testApp::keyPressed(int key){
 	case 'g': gui1->toggleVisible(); break;
 	case 'd': toDrawVideo = !toDrawVideo; break; //TODO: update gui
 	case 'v': toDrawSideViewports = !toDrawSideViewports; setupViewports(toDrawSideViewports); break;
+	case 'h': showHelpText = !showHelpText; break;
+	case 's': toDrawScene = !toDrawScene; break;
 
 	case 'p':
 		if(bCamParent){
@@ -546,6 +551,19 @@ void testApp::allocateTextures()
 void testApp::update()
 {
 	outputStrings.clear();
+	// help text
+	outputStrings.push_back("Press keys 1-4 to select a camera for main view");
+	outputStrings.push_back("Camera selected: " + ofToString(iMainCamera + 1));
+	outputStrings.push_back("Press 'f' to toggle fullscreen");
+	outputStrings.push_back("Press 'p' to toggle parents on OrthoCamera's");
+	outputStrings.push_back("[d]raw video:" + ofToString(toDrawVideo ? "On" : "Off"));
+	outputStrings.push_back("draw [s]cene:" + ofToString(toDrawScene ? "On" : "Off"));
+	outputStrings.push_back("side [v]iewports:" + ofToString(toDrawSideViewports ? "On" : "Off"));
+
+
+
+	outputStrings.push_back(ofToString(ofGetFrameRate()));
+	
 	updateMats();
 	cvProcess();
 }
@@ -605,7 +623,7 @@ void testApp::cvProcess()
 
 	}
 
-//	m8 = 255 - m8; //black shadow
+	m8 = 255 - m8; //black shadow
 		
 	cv::morphologyEx(m8, m8, CV_MOP_DILATE, cv::getStructuringElement(CV_SHAPE_ELLIPSE, cv::Size(11, 11)));
 

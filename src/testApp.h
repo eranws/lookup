@@ -64,8 +64,10 @@ private:
 		ofVec3f ray[2];
 
 		bool toDrawVideo;
+		bool toDrawScene;
 		bool toDrawGrid;
 		bool toDrawSideViewports;
+		bool showHelpText;
 
 		ofxCv::ContourFinder cf;
 		std::vector<string> outputStrings;
