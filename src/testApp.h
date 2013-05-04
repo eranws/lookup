@@ -72,6 +72,7 @@ private:
 		ofxCv::ContourFinder cf;
 		std::vector<string> outputStrings;
 
+		void drawShadow();
 		void drawVideo();
 		void drawVideo2D();
 
@@ -83,4 +84,5 @@ private:
 		void cvProcess();
 		ofTexture depthTex;
 		ofTexture colorTex;
+		ofTexture shadowTex;
 };

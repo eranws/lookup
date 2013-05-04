@@ -52,42 +52,33 @@ void testApp::drawVideo2D(){
 	depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
 }
 
+void testApp::drawShadow()
+{
+	ofPushMatrix();
+	ofTranslate(-shadowTex.getWidth() / 2, -shadowTex.getHeight() / 2, 0);
+	shadowTex.draw(0,0);
+	ofPopMatrix();
+}
 
 void testApp::drawVideo(){
 	if (!toDrawVideo)
 		return;
-	
-	//depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
+	glDisable(GL_DEPTH_TEST);
+
 	ofPushMatrix();
-	ofTranslate(-depthTex.getWidth() / 2, -depthTex.getHeight() / 2, 0);
+
+	float f = 0.5;
+	int w = depthTex.getWidth() * f, h = depthTex.getHeight() * f;
+
+	ofTranslate(ofGetWindowWidth() - 2 * w, ofGetWindowHeight() - h, 0);
+	ofScale(f, f, f);
+
 	depthTex.draw(0, 0, -0.1);
 	cf.draw();
 	//cf.getPolyline(0).draw();
-	colorTex.draw(0 ,0, 1);
+	colorTex.draw(2 * w ,0, 1); //scaled!
 	ofPopMatrix();
-
-	/*
-
-	//grabcut
-	Mat mask;
-	mask = Mat::zeros(c.size(), CV_8UC1);
-	
-	mask.setTo(GC_FGD, depthMask);
-	mask.setTo(GC_PR_BGD, invertDepthMask);
-
-	Mat bgdModel;
-	Mat fgdModel;
-	cv::Rect rect(0,0,mask.cols, mask.rows);
-	int iterCount = 3;
-	int mode = GC_INIT_WITH_MASK;
-//	grabCut(c, mask, rect, bgdModel, fgdModel, 1);
-	grabCut(c, mask, rect, bgdModel, fgdModel, 5 , mode);
-
-	//imshow("bgd", bgdModel);
-	imshow("mask", mask * 70);
-	imshow("color", c);
-	*/
-
+	glEnable(GL_DEPTH_TEST);
 }
 
 void testApp::setupGui()
@@ -197,7 +188,7 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 
 void testApp::setupScene()
 {
-	iMainCamera = 0;
+	iMainCamera = 1;
 	bCamParent = false;
 
 	// user camera
@@ -206,7 +197,7 @@ void testApp::setupScene()
 	cameras[0] = &camEasyCam;
 
 	// front
-	camFront.scale = 200;
+	camFront.scale = 240; // camera height / 2
 	camFront.tilt(-180);
 	cameras[1] = &camFront;
 
@@ -270,7 +261,7 @@ void testApp::draw(){
 		glEnable(GL_DEPTH_TEST);
 	}
 	glDisable(GL_DEPTH_TEST);
-	drawVideo2D();
+	//drawVideo2D();
 	glEnable(GL_DEPTH_TEST);
 
 	// draw main viewport
@@ -304,6 +295,8 @@ void testApp::draw(){
 
 	// draw some labels
 	outputStrings.push_back(ofToString(nodeSwarm.size()));
+
+	drawVideo();
 
 	if(showHelpText)
 	{
@@ -463,7 +456,7 @@ void testApp::drawScene(int iCameraDraw){
 		ofPopStyle();
 	}
 
-	drawVideo();
+	drawShadow();
 	
 }
 
@@ -537,15 +530,21 @@ void testApp::updateMats()
 {
 	ofPtr<ofPixels> colorPixels = colorStream.getPixels();
 	colorMat = ofxCv::toCv(*colorPixels);
+	colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_RGB);
 
 	ofPtr<ofShortPixels> depthPixels = depthStream.getPixels();
 	depthMat = ofxCv::toCv(*depthPixels);
+	cv::Mat m8;	depthMat.convertTo(m8, CV_8UC1, 0.25);
+
+	depthTex.loadData(m8.ptr(), m8.cols, m8.rows, GL_LUMINANCE);
+
 }
 
 void testApp::allocateTextures()
 {
 	depthTex.allocate(depthMat.cols, depthMat.rows, GL_LUMINANCE);
 	colorTex.allocate(colorMat.cols, colorMat.rows, GL_RGB);
+	shadowTex.allocate(colorMat.cols, colorMat.rows, GL_RGB);
 }
 
 void testApp::update()
@@ -638,7 +637,7 @@ void testApp::cvProcess()
 	waitKey(1);
 
 	c.copyTo(c2, m8);
-	depthTex.loadData(m8.ptr(), m8.cols, m8.rows, GL_LUMINANCE);
-	colorTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_RGB);
+	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_RGB);
+	
 }
 
