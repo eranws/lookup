@@ -32,3 +32,7 @@ void ofxOniDevice::setRegistration( bool b )
 	device->setImageRegistrationMode(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);	
 }
 
+void ofxOniDevice::setFrameSync( bool b )
+{
+	device->setDepthColorSyncEnabled(b);	
+}

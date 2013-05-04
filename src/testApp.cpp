@@ -32,6 +32,7 @@ void testApp::setup(){
 	depthStream.setup(oniDevice.getDevice());
 	colorStream.setup(oniDevice.getDevice());
 	oniDevice.setRegistration(true);
+	oniDevice.setFrameSync(true);
 
 	recorder.setup();
 	recorder.addStream(depthStream.getStream());

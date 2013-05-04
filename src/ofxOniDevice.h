@@ -17,6 +17,7 @@ public:
 	ofPtr<openni::Device> getDevice() const { return device; }
 	
 	void setRegistration( bool b ); //TODO: access via settings object
+	void setFrameSync( bool b );
 	
 protected:
 	ofPtr<openni::Device> device;
