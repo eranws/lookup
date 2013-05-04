@@ -71,6 +71,7 @@ private:
 		std::vector<string> outputStrings;
 
 		void drawVideo();
+		void drawVideo2D();
 
 		void updateMats();
 		cv::Mat colorMat;

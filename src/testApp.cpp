@@ -46,6 +46,10 @@ void testApp::setup(){
 
 }
 
+void testApp::drawVideo2D(){
+	depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
+}
+
 
 void testApp::drawVideo(){
 	
@@ -260,6 +264,9 @@ void testApp::draw(){
 		ofPopStyle();
 		glEnable(GL_DEPTH_TEST);
 	}
+	glDisable(GL_DEPTH_TEST);
+	drawVideo2D();
+	glEnable(GL_DEPTH_TEST);
 
 	// draw main viewport
 	cameras[iMainCamera]->begin(viewMain);
