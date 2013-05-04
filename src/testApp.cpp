@@ -39,7 +39,9 @@ void testApp::setup(){
 	updateMats();
 	allocateTextures();
 	
-	setupGui(); 
+	setupGui();
+	//gui1->loadSettings("settings.xml");
+
 	setupScene();
 
 	gui1->setVisible(false);
@@ -93,6 +95,8 @@ void testApp::setupGui()
 	gui1->addWidgetDown(new ofxUILabel("Look Up", OFX_UI_FONT_LARGE)); 
 	gui1->addWidgetDown(new ofxUILabel("Press 'g' to Hide GUIs", OFX_UI_FONT_LARGE)); 
 
+	gui1->addButton("Save Settings", false, dim, dim);
+
 	gui1->addSpacer(length-xInit, 2);
 
 	gui1->addWidgetDown(new ofxUILabel("Depth Cutoff", OFX_UI_FONT_MEDIUM)); 
@@ -135,12 +139,10 @@ void testApp::setupGui()
 	gui1->addWidgetDown(new ofxUILabel("2D PAD", OFX_UI_FONT_MEDIUM)); 
 	gui1->add2DPad("PAD", ofPoint(0,length-xInit), ofPoint(0,120), ofPoint((length-xInit)*.5,120*.5), length-xInit,120);
 
+
+	gui1->setDrawBack(true);
 	gui1->setColorBack(ofColor::gray);
-	//gui1->setDrawBack(true);
-
-	gui1->setColorFill(ofColor::gray);
-	gui1->setDrawFill(true);
-
+	
 	ofAddListener(gui1->newGUIEvent,this,&testApp::guiEvent);
 }
 
@@ -182,6 +184,10 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 		cout << output << endl; 
 	}
 
+	else if(name == "Save Settings")
+	{
+		gui1->saveSettings("settings.xml");
+	}
 
 
 }
