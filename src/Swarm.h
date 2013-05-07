@@ -16,11 +16,16 @@ public:
 	void customDraw();
 	ofLight light;
 
+	static void initImages();
+
+
 protected:
 	
 	vector<ofPtr<Bird> > particles;
 
 	float _positionDispersion;
 	float _velocityDispersion;
+
+	static vector <ofImage> images;
 
 };

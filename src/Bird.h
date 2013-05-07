@@ -22,8 +22,6 @@ public:
 	
 	Bird(ofVec3f velocity);
 	~Bird();
-	
-	static void initImages();
 
 	void setup();
 	virtual void customDraw();
@@ -38,8 +36,5 @@ public:
 	int animationFrameStart;
 	int glideFrameStart;
 	int birth;
-
-	static vector <ofImage> images;
-
 };
 

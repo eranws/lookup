@@ -1,7 +1,6 @@
 #include "Bird.h"
 #include "ofImage.h"
 
-vector <ofImage> Bird::images;
 
 string filenames[] = {
 	"body_mc.png",
@@ -124,45 +123,6 @@ void Bird::setup()
 
 }
 
-
-void Bird::initImages()
-{
-	ofDirectory dir;
-	//int nFiles = dir.listDir("plops");
-	int nFiles = dir.listDir("PNG_yellow_new");
-	if(0&&nFiles) {        
-		for(int i=0; i<dir.numFiles(); i++) { 
-			// add the image to the vector
-			string filePath = dir.getPath(i);
-			images.push_back(ofImage());
-			images.back().loadImage(filePath);
-		}
-
-		for(int i = 0; i < dir.numFiles(); i++) {
-			images[i].setAnchorPercent(0.5f, 0.5f);
-			images[i].rotate90(2);
-		}
-	}
-
-	
-
-	ofDirectory dir2("yellow_parts");
-
-	for(int i=0; i<sizeof(filenames) / sizeof(string); i++) { 
-			// add the image to the vector
-			string filePath = dir2.getOriginalDirectory() + filenames[i];
-			images.push_back(ofImage());
-			images.back().loadImage(filePath);
-			//images.back().setAnchorPoint(xRot[i], yRot[i]);
-			images.back().resetAnchor();
-//			images.back().setAnchorPoint(100*xRot[i], yRot[i]);
-//			images.back().setAnchorPercent(0.5f, 0.5f);
-
-//			images[i].rotate90(2);
-	}
-
-
-}
 
 void Wing::customDraw()
 {

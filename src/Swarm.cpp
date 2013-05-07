@@ -1,5 +1,30 @@
 #include "Swarm.h"
 
+vector <ofImage> swarm::images;
+
+void swarm::initImages()
+{
+	ofDirectory dir;
+	//int nFiles = dir.listDir("plops");
+	int nFiles = dir.listDir("PNG_yellow_new");
+	if(nFiles) {        
+		for(int i=0; i<dir.numFiles(); i++) { 
+			// add the image to the vector
+			string filePath = dir.getPath(i);
+			images.push_back(ofImage());
+			images.back().loadImage(filePath);
+		}
+
+		for(int i = 0; i < dir.numFiles(); i++) {
+			images[i].setAnchorPercent(0.5f, 0.5f);
+			images[i].rotate90(2);
+		}
+	}
+
+
+}
+
+
 // This 'swarm' object demonstrates a simple particle system
 //  with 'simple harmonic motion'
 
