@@ -1,13 +1,20 @@
 #include "Swarm.h"
 
-vector <ofImage> swarm::images;
+string filenames[] = {
+	"blue_bird/PNG Sequence",
+	"mustard_bird/PNG Sequence",
+	"yellow_bird/PNG Sequence"
+};
 
-void swarm::initImages()
+void initAnimation(string s)
 {
 	ofDirectory dir;
 	//int nFiles = dir.listDir("plops");
-	int nFiles = dir.listDir("PNG_yellow_new");
-	if(nFiles) {        
+	int nFiles = dir.listDir(s);
+	if(nFiles) {
+		animations.push_back(Animation());
+		Animation& images = animations.back();
+
 		for(int i=0; i<dir.numFiles(); i++) { 
 			// add the image to the vector
 			string filePath = dir.getPath(i);
@@ -17,11 +24,17 @@ void swarm::initImages()
 
 		for(int i = 0; i < dir.numFiles(); i++) {
 			images[i].setAnchorPercent(0.5f, 0.5f);
-			images[i].rotate90(2);
+			//images[i].rotate90(2);
 		}
 	}
+}
 
-
+void swarm::initImages()
+{
+	for (int i = 0; i < sizeof(filenames) / sizeof(string); i++)
+	{
+		initAnimation(filenames[i]);
+	}
 }
 
 
@@ -57,8 +70,9 @@ void swarm::addParticle(int nParticles)
 			ofRandom(-5, 5)  * _velocityDispersion,
 			ofRandom(-5, 5)  * _velocityDispersion);
 
-		Bird* b = new Bird(v, images);
-		b->	setPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f)) * _positionDispersion); //TODO: make member
+		int idx = rand() % animations.size();
+		Bird* b = new Bird(v, animations[idx]);
+		b->	setPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(2, 5)) * _positionDispersion); //TODO: make member
 
 		b->setup();
 		particles.push_back(ofPtr<Bird>(b));

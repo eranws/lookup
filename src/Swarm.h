@@ -3,6 +3,9 @@
 #include "ofFileUtils.h"
 #include "Bird.h"
 
+typedef vector<ofImage> Animation;
+static vector<Animation> animations; 
+
 // This 'swarm' object demonstrates a simple particle system
 //  with 'simple harmonic motion'
 class swarm : public ofNode {
@@ -26,6 +29,5 @@ protected:
 	float _positionDispersion;
 	float _velocityDispersion;
 
-	static vector <ofImage> images;
 
 };
