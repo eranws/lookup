@@ -26,7 +26,15 @@ void swarm::init(float positionDispersion, float velocityDispersion){
 void swarm::addParticle(int nParticles)
 {
 	for (int i = 0; i < nParticles; i++){
-		Bird* b = new Bird(_positionDispersion, _velocityDispersion);
+
+		ofVec3f v(
+			ofRandom(-5, 5)  * _velocityDispersion,
+			ofRandom(-5, 5)  * _velocityDispersion,
+			ofRandom(-5, 5)  * _velocityDispersion);
+
+		Bird* b = new Bird(v);
+		b->	setPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f)) * _positionDispersion); //TODO: make member
+
 		b->setup();
 		particles.push_back(ofPtr<Bird>(b));
 	}

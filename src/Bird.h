@@ -20,7 +20,7 @@ class Bird : public ofNode
 {
 public:
 	
-	Bird(int positionDispersion, int velocityDispersion);
+	Bird(ofVec3f velocity);
 	~Bird();
 	
 	static void initImages();

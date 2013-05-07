@@ -30,17 +30,10 @@ float yRot[] = {
 };
 
 
-Bird::Bird(int positionDispersion, int velocityDispersion)
-{
-	//
-	
-	
-	setPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f)) * positionDispersion); //TODO: make member
+Bird::Bird(ofVec3f velocity /*img*/) :
+	velocity(velocity)
 
-		velocity.x = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10; //TODO: make member
-		velocity.y = (ofRandom(1.0f) - 0.5f)  * velocityDispersion * 10;
-		velocity.z = (ofRandom(1.0f) - 0.5f)  * velocityDispersion;
-		
+{
 
 		color.r = ofRandom(255.0f);
 		color.g = ofRandom(255.0f);
