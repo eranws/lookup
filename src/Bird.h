@@ -22,6 +22,7 @@ public:
 	int glideFrameStart;
 	int birth;
 
+	int rw;
 
 	const vector <ofImage>& _images;
 	

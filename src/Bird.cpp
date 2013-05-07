@@ -42,8 +42,12 @@ void Bird::customDraw()
 	//if ((animationCounter + particles[i]->glideFrameStart) % glidingFactor > 0) frameIndex = particles[i]->animationFrameStart;
 
 	// draw the image sequence at the new frame count
-	int i = ofGetFrameNum() % _images.size();
+	rw += (rand() % 4) ? 1 : 0; //random walk
+	//int i = ofGetFrameNum();
+	
+	int i = rw % _images.size();
 	ofImage img = _images[i];
+
 	img.draw(0,0);
 
 	ofPopStyle();
