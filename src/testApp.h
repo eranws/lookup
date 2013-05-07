@@ -11,6 +11,7 @@
 #include "Grid.h"
 #include "OrthoCamera.h"
 #include "ContourFinder.h"
+#include "..\Trees.h"
 
 #define N_CAMERAS 4
 

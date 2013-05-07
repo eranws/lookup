@@ -220,6 +220,8 @@ void testApp::setupScene()
 
 	setupViewports(toDrawSideViewports);
 
+	Trees::init();
+
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
 	nodeSwarm.init(100, 5);
 	nodeSwarm.addParticle(1);
@@ -344,6 +346,7 @@ void testApp::drawScene(int iCameraDraw){
 	if (!toDrawScene)
 		return;
 
+	Trees::draw();
 	nodeSwarm.draw();
 	if (toDrawGrid)
 	{
