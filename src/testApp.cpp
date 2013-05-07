@@ -195,12 +195,12 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 
 void testApp::setupScene()
 {
-	iMainCamera = 1;
+	iMainCamera = 0;
 	bCamParent = false;
 
 	// user camera
 	camEasyCam.setTarget(nodeSwarm);
-	camEasyCam.setDistance(100);
+	camEasyCam.setDistance(1000);
 	cameras[0] = &camEasyCam;
 
 	// front

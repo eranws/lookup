@@ -18,7 +18,7 @@ void Trees::init(/*TODO: input*/)
 {
 	ofDirectory dir;
 	//int nFiles = dir.listDir("plops");
-	int nFiles = dir.listDir("PNG_yellow_new"); //\treetop\PNG Sequence
+	int nFiles = dir.listDir("/treetop/PNG Sequence");
 	if(nFiles) {        
 		for(int i=0; i<dir.numFiles(); i++) { 
 			// add the image to the vector

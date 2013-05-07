@@ -57,12 +57,12 @@
 <Widget>
     <Kind>2</Kind>
     <Name>Draw Video</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>Draw Grid</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
