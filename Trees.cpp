@@ -36,6 +36,11 @@ void Trees::init(/*TODO: input*/)
 
 void Trees::draw()
 {
-	int i = ofGetFrameNum() % images.size();
+	static int rw = 0;
+	rw += (rand() % 4) ? 1 : (rand() % 4) ? 0 : -1; //random walk
+	//int i = ofGetFrameNum();
+
+	int i = rw % images.size();
+
 	images[i].draw(0,0);
 }
