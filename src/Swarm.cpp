@@ -36,7 +36,7 @@ void swarm::init(float positionDispersion, float velocityDispersion){
 
 	// Check if we've already initialised
 	if(particles.size() == 0){
-		Bird::initImages();
+		swarm::initImages();
 	}
 	else
 	{
@@ -57,7 +57,7 @@ void swarm::addParticle(int nParticles)
 			ofRandom(-5, 5)  * _velocityDispersion,
 			ofRandom(-5, 5)  * _velocityDispersion);
 
-		Bird* b = new Bird(v);
+		Bird* b = new Bird(v, images);
 		b->	setPosition(ofVec3f(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f)) * _positionDispersion); //TODO: make member
 
 		b->setup();
