@@ -8,13 +8,14 @@ swarm::swarm(){
 }
 
 void swarm::init(float positionDispersion, float velocityDispersion){
-	Bird::initImages();
 
 	// Check if we've already initialised
-	if(particles.size() != 0){
-		// clear out old data
+	if(particles.size() == 0){
+		Bird::initImages();
+	}
+	else
+	{
 		ofLogWarning("swarm") <<  "Swarm: Already initialised";
-
 		particles.clear();
 	}
 
