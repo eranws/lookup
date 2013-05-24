@@ -40,6 +40,9 @@ void testApp::setup(){
 	updateMats();
 	allocateTextures();
 	
+	setupNite();
+
+
 	setupGui();
 	//gui1->loadSettings("settings.xml");
 
@@ -649,5 +652,53 @@ void testApp::cvProcess()
 	c.copyTo(c2, m8);
 	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_RGB);
 	
+}
+
+#include "NiTE.h"
+void testApp::setupNite()
+{
+	nite::NiTE::initialize();
+	nite::UserTracker userTracker;
+	nite::Status niteRc;
+
+	niteRc = userTracker.create();
+	if (niteRc != nite::STATUS_OK)
+	{
+		printf("Couldn't create user tracker\n");
+		return;
+	}
+	printf("\nStart moving around to get detected...\n(PSI pose may be required for skeleton calibration, depending on the configuration)\n");
+
+	nite::UserTrackerFrameRef userTrackerFrame;
+	while (1)
+	{
+		niteRc = userTracker.readFrame(&userTrackerFrame);
+		if (niteRc != nite::STATUS_OK)
+		{
+			printf("Get next frame failed\n");
+			continue;
+		}
+
+		const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
+		for (int i = 0; i < users.getSize(); ++i)
+		{
+			const nite::UserData& user = users[i];
+//			updateUserState(user,userTrackerFrame.getTimestamp());
+			if (user.isNew())
+			{
+				userTracker.startSkeletonTracking(user.getId());
+			}
+			else if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
+			{
+				const nite::SkeletonJoint& head = user.getSkeleton().getJoint(nite::JOINT_HEAD);
+				if (head.getPositionConfidence() > .5)
+					printf("%d. (%5.2f, %5.2f, %5.2f)\n", user.getId(), head.getPosition().x, head.getPosition().y, head.getPosition().z);
+			}
+		}
+
+	}
+
+	nite::NiTE::shutdown();
+
 }
 

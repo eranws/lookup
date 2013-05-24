@@ -83,6 +83,7 @@ private:
 
 		void allocateTextures();
 		void cvProcess();
+		void setupNite();
 		ofTexture depthTex;
 		ofTexture colorTex;
 		ofTexture shadowTex;
