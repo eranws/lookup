@@ -1,9 +1,9 @@
 #include "Swarm.h"
 
 string filenames[] = {
-	"blue_bird/PNG Sequence",
-	"mustard_bird/PNG Sequence",
-	"yellow_bird/PNG Sequence"
+	"blue_bird/PNG Sequence60",
+//	"mustard_bird/PNG Sequence",
+//	"yellow_bird/PNG Sequence"
 };
 
 void initAnimation(string s)
@@ -86,6 +86,7 @@ void swarm::customDraw(){
 	light.setPosition(particles[0]->getGlobalPosition());
 
 	for(int i = 0; i < particles.size(); i++){
+		ofSetColor(particles[i]->color);
 		particles[i]->draw();
 	}
 
