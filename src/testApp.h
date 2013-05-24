@@ -15,6 +15,8 @@
 
 #define N_CAMERAS 4
 
+#include "NiTE.h"
+
 class testApp : public ofBaseApp{
 
 	public:
@@ -39,6 +41,11 @@ private:
 		void setupViewports(bool sideViews = true);
 		void drawScene(int iCameraDraw);
 		void updateMouseRay();
+
+		void updateNite();
+		nite::UserTracker userTracker;
+
+
 
 		//cameras (all these inherit from ofCamera)
 		ofEasyCam camEasyCam;
@@ -88,3 +95,4 @@ private:
 		ofTexture colorTex;
 		ofTexture shadowTex;
 };
+

@@ -562,6 +562,8 @@ void testApp::allocateTextures()
 
 void testApp::update()
 {
+	updateNite();
+
 	outputStrings.clear();
 	// help text
 	outputStrings.push_back("Press keys 1-4 to select a camera for main view");
@@ -654,11 +656,9 @@ void testApp::cvProcess()
 	
 }
 
-#include "NiTE.h"
 void testApp::setupNite()
 {
 	nite::NiTE::initialize();
-	nite::UserTracker userTracker;
 	nite::Status niteRc;
 
 	niteRc = userTracker.create();
@@ -667,16 +667,20 @@ void testApp::setupNite()
 		printf("Couldn't create user tracker\n");
 		return;
 	}
-	printf("\nStart moving around to get detected...\n(PSI pose may be required for skeleton calibration, depending on the configuration)\n");
+	printf("\nuserTracker.create - OK\n");
 
+}
+
+
+void testApp::updateNite()
+{
 	nite::UserTrackerFrameRef userTrackerFrame;
-	while (1)
-	{
-		niteRc = userTracker.readFrame(&userTrackerFrame);
+
+	nite::Status niteRc = userTracker.readFrame(&userTrackerFrame);
 		if (niteRc != nite::STATUS_OK)
 		{
 			printf("Get next frame failed\n");
-			continue;
+			return;
 		}
 
 		const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
@@ -692,13 +696,39 @@ void testApp::setupNite()
 			{
 				const nite::SkeletonJoint& head = user.getSkeleton().getJoint(nite::JOINT_HEAD);
 				if (head.getPositionConfidence() > .5)
-					printf("%d. (%5.2f, %5.2f, %5.2f)\n", user.getId(), head.getPosition().x, head.getPosition().y, head.getPosition().z);
+				{
+					//printf("%d. (%5.2f, %5.2f, %5.2f)\n", user.getId(), head.getPosition().x, head.getPosition().y, head.getPosition().z);
+				}
+				const nite::SkeletonJoint& leftHand = user.getSkeleton().getJoint(nite::JOINT_LEFT_HAND);
+				const nite::SkeletonJoint& leftElbow = user.getSkeleton().getJoint(nite::JOINT_LEFT_ELBOW);
+
+				if (leftHand.getPositionConfidence() > .5 && leftElbow.getPositionConfidence() > .5){
+				//	printf("L: %5.2f \t", leftElbow.getPosition().y - leftHand.getPosition().y);
+				}
+
+				const nite::SkeletonJoint& rightHand = user.getSkeleton().getJoint(nite::JOINT_RIGHT_HAND);
+				const nite::SkeletonJoint& rightElbow = user.getSkeleton().getJoint(nite::JOINT_RIGHT_ELBOW);
+
+				const nite::SkeletonJoint& j1 = rightHand;
+				const nite::SkeletonJoint& j2 = leftHand;
+
+				if (j1.getPositionConfidence() > .5 && j2.getPositionConfidence() > .5){
+					const nite::Point3f& np1 = j1.getPosition();
+					const nite::Point3f& np2 = j2.getPosition();
+
+					ofPoint p1(np1.x, np1.y, np1.z);
+					ofPoint p2(np2.x, np2.y, np2.z);
+
+
+					float d = p1.distance(p2);
+				//	printf("R: %5.2f \n", rightElbow.getPosition().y - rightHand.getPosition().y);
+
+					printf("D: %5.2f \n", d); 
+				}
+
+
 			}
 		}
 
 	}
-
-	nite::NiTE::shutdown();
-
-}
-
+//	nite::NiTE::shutdown();
