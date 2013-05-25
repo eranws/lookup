@@ -50,18 +50,20 @@ void ofxColorStream ::threadedFunction()
 			continue;
 		}
 
-		if (frame.getVideoMode().getPixelFormat() != openni::PIXEL_FORMAT_RGB888)
+		openni::PixelFormat pixelFormat = frame.getVideoMode().getPixelFormat();
+
+		if (pixelFormat != openni::PIXEL_FORMAT_GRAY8)
 		{
 			printf("Unexpected frame format\n");
 			continue;
 		}
 
-		openni::RGB888Pixel* pcolor = (openni::RGB888Pixel*)frame.getData();
+		const unsigned char* pcolor = (const unsigned char*)frame.getData();
 		int middleIndex = (frame.getHeight()+1)*frame.getWidth()/2;
 
 		//printf("[%08llu] %8d fps:%d\n", (long long)frame.getTimestamp(), pcolor[middleIndex].r, stream->getVideoMode().getFps());
 		
-		pixels[1]->setFromPixels((const unsigned char*)frame.getData(), pixels[1]->getWidth(), pixels[1]->getHeight(), OF_IMAGE_COLOR);
+		pixels[1]->setFromPixels((const unsigned char*)frame.getData(), pixels[1]->getWidth(), pixels[1]->getHeight(), OF_IMAGE_GRAYSCALE);
 		swap(pixels[0], pixels[1]);
 
 	}
@@ -79,7 +81,7 @@ void ofxColorStream::allocateBuffers()
 	for (int i = 0; i < 2; i++)
 	{
 		pixels[i] = ofPtr<ofPixels>(new ofPixels);
-		pixels[i]->allocate(w, h, OF_IMAGE_COLOR);
+		pixels[i]->allocate(w, h, OF_IMAGE_GRAYSCALE);
 	}
 //	texture.allocate(w, h, GL_RGB);
 }

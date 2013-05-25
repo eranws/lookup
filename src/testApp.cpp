@@ -548,7 +548,7 @@ void testApp::updateMats()
 {
 	ofPtr<ofPixels> colorPixels = colorStream.getPixels();
 	colorMat = ofxCv::toCv(*colorPixels);
-	colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_RGB);
+	colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
 
 	ofPtr<ofShortPixels> depthPixels = depthStream.getPixels();
 	depthMat = ofxCv::toCv(*depthPixels);
@@ -561,7 +561,7 @@ void testApp::updateMats()
 void testApp::allocateTextures()
 {
 	depthTex.allocate(depthMat.cols, depthMat.rows, GL_LUMINANCE);
-	colorTex.allocate(colorMat.cols, colorMat.rows, GL_RGB);
+	colorTex.allocate(colorMat.cols, colorMat.rows, GL_LUMINANCE);
 	shadowTex.allocate(colorMat.cols, colorMat.rows, GL_RGB);
 }
 
@@ -649,15 +649,16 @@ void testApp::cvProcess()
 
 	
 	ofxUISlider* s = (ofxUISlider*)gui1->getWidget("colorThreshold");
-	cvtColor(c, c, CV_RGB2GRAY);
+//	cvtColor(c, c, CV_RGB2GRAY);
 	c = c > s->getScaledValue();
+
 	cvtColor(c, c, CV_GRAY2RGB);
 	imshow("c2",c);
 	waitKey(1);
 
 	Mat c2 = c.clone();
 	c2.setTo(255);
-	c.copyTo(c2, m8);
+	//c.copyTo(c2, m8); fix Res
 	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_RGB);
 	
 }
