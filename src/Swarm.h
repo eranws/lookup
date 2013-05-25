@@ -14,6 +14,7 @@ public:
 	swarm();
 	void init(float positionDispersion, float velocityDispersion);
 	void addParticle(int nParticles = 1);
+	void addParticle(ofPoint p, ofVec3f v);
 	int size();
 
 	void customDraw();

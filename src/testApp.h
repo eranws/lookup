@@ -34,7 +34,13 @@ public:
 	bool dTrigger;
 
 	void update( const nite::UserData& user );
-
+	//std::vector<string> userOutputStrings;
+	struct Status
+	{
+		bool valid;
+		ofPoint position; //realWorld
+		ofPoint velocity; //realWorld
+	} status;
 };
 typedef map<nite::UserId, UserAppData> UserMap;
 

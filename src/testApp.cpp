@@ -567,7 +567,6 @@ void testApp::allocateTextures()
 
 void testApp::update()
 {
-	updateNite();
 
 	outputStrings.clear();
 	// help text
@@ -585,6 +584,8 @@ void testApp::update()
 	
 	updateMats();
 	cvProcess();
+	updateNite();
+
 }
 
 void testApp::cvProcess()
@@ -705,6 +706,10 @@ void testApp::updateNite()
 			else if (user.isVisible() && user.getSkeleton().getState() == nite::SKELETON_TRACKED)
 			{
 				userMap[id].update(user);
+				if (userMap[id].status.valid)
+				{
+					nodeSwarm.addParticle(userMap[id].status.position, userMap[id].status.velocity);
+				}
 			}
 
 
@@ -724,6 +729,8 @@ void testApp::exit()
 
 void UserAppData::update( const nite::UserData& user )
 {
+	status.valid = false;
+
 	const nite::Skeleton& skeleton = user.getSkeleton();
 	const nite::SkeletonJoint& head = skeleton.getJoint(nite::JOINT_HEAD);
 	const nite::SkeletonJoint& leftHand = skeleton.getJoint(nite::JOINT_LEFT_HAND);
@@ -734,7 +741,7 @@ void UserAppData::update( const nite::UserData& user )
 	if (head.getPositionConfidence() > .5)
 	{
 //		printf("H: %d. (%5.2f, %5.2f, %5.2f)\n", user.getId(), head.getPosition().x, head.getPosition().y, head.getPosition().z);
-		printf("H: %d. %5.2f", user.getId(), head.getPosition().z);
+//userOutputStrings.,		printf("H: %d. %5.2f", user.getId(), head.getPosition().z);
 	}
 
 	if (leftHand.getPositionConfidence() > .5 && leftElbow.getPositionConfidence() > .5){
@@ -746,16 +753,17 @@ void UserAppData::update( const nite::UserData& user )
 	const nite::SkeletonJoint& j2 = leftHand;
 
 	if (j1.getPositionConfidence() > .5 && j2.getPositionConfidence() > .5){
-		const nite::Point3f& np1 = j1.getPosition();
+		
+		const nite::Point3f& np1 = j1.getPosition(); //np - nitePoint
 		const nite::Point3f& np2 = j2.getPosition();
 
-		ofPoint p1(np1.x, np1.y, np1.z);
+		ofPoint p1(np1.x, np1.y, np1.z); //of Point
 		ofPoint p2(np2.x, np2.y, np2.z);
 
 		float d = p1.distance(p2);
 		//	printf("R: %5.2f \n", rightElbow.getPosition().y - rightHand.getPosition().y);
 
-		printf("D: %5.2f\t", d); 
+		//printf("D: %5.2f\t", d); 
 
 		dRunAvg += d;
 		dValues.push_front(d);
@@ -764,11 +772,16 @@ void UserAppData::update( const nite::UserData& user )
 			dRunAvg -= dValues.back();
 			dValues.pop_back();
 
-			printf("dRunAvg: %.2f\t", dRunAvg); 
+			//printf("dRunAvg: %.2f\t", dRunAvg); 
 			if (dRunAvg < dValuesLowThreshold * dValuesSize && dTrigger)
 			{
-				printf("fire!");
 				dTrigger = false;
+				printf("fire!");
+				status.valid = true;
+				status.position = p1.middle(p2);
+				status.velocity = ofVec3f(ofRandom(-5, 5), ofRandom(-5, 5), ofRandom(-5, 5));
+
+
 			}
 			if (dRunAvg > dValuesHighThreshold * dValuesSize)
 			{
