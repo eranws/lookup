@@ -1,6 +1,7 @@
 #include "Trees.h"
 #include "ofFileUtils.h"
 #include "ofImage.h"
+#include "ofMain.h"
 
 vector <ofImage> Trees::images;
 
@@ -14,11 +15,11 @@ Trees::~Trees(void)
 {
 }
 
-void Trees::init(/*TODO: input*/)
+void Trees::init(string dirString)
 {
 	ofDirectory dir;
 	//int nFiles = dir.listDir("plops");
-	int nFiles = dir.listDir("/treetop/PNG Sequence");
+	int nFiles = dir.listDir(dirString);//"/treetop/PNG Sequence");
 	if(nFiles) {        
 		for(int i=0; i<dir.numFiles(); i++) { 
 			// add the image to the vector
@@ -28,8 +29,8 @@ void Trees::init(/*TODO: input*/)
 		}
 
 		for(int i = 0; i < dir.numFiles(); i++) {
-			images[i].setAnchorPercent(0.5f, 0.5f);
-			images[i].rotate90(2);
+//			images[i].setAnchorPercent(0.5f, 0.5f);
+//			images[i].rotate90(2);
 		}
 	}
 }
@@ -42,5 +43,6 @@ void Trees::draw()
 
 	int i = rw % images.size();
 
-	images[i].draw(0,0);
+	images[i].draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
+
 }

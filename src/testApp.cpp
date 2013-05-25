@@ -60,7 +60,10 @@ void testApp::setup(){
 }
 
 void testApp::drawVideo2D(){
-	depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
+//	depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
+	shadowTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
+	Trees::draw();
+
 }
 
 void testApp::drawShadow()
@@ -228,7 +231,7 @@ void testApp::setupScene()
 
 	setupViewports(toDrawSideViewports);
 
-	Trees::init();
+	Trees::init("C:/Users/eran.weissenstern/Dropbox/Infected_bird_2/treetop 2/PNG Sequence2_60 9X16");
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
 	nodeSwarm.init(100, 5);
@@ -278,7 +281,7 @@ void testApp::draw(){
 		glEnable(GL_DEPTH_TEST);
 	}
 	glDisable(GL_DEPTH_TEST);
-	//drawVideo2D();
+	drawVideo2D();
 	glEnable(GL_DEPTH_TEST);
 
 	// draw main viewport
@@ -354,7 +357,6 @@ void testApp::drawScene(int iCameraDraw){
 	if (!toDrawScene)
 		return;
 
-	Trees::draw();
 	nodeSwarm.draw();
 	if (toDrawGrid)
 	{
@@ -474,7 +476,7 @@ void testApp::drawScene(int iCameraDraw){
 		ofPopStyle();
 	}
 
-	drawShadow();
+	//drawShadow();
 	
 }
 

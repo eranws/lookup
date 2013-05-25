@@ -3,7 +3,7 @@
 	class Trees
 {
 public:
-	static void init();
+	static void init(string dirString);
 	static void draw();
 
 private:
