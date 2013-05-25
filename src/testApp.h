@@ -17,6 +17,27 @@
 
 #include "NiTE.h"
 
+
+class UserAppData
+{
+public:
+	UserAppData() : dRunAvg(0.0f), dTrigger(false)
+	{
+	}
+
+	//Todo: classify 'd', for different joint types and conditions
+	static int dValuesSize;
+	static int dValuesLowThreshold;
+	static int dValuesHighThreshold;
+	deque<float> dValues;
+	float dRunAvg;
+	bool dTrigger;
+
+	void update( const nite::UserData& user );
+
+};
+typedef map<nite::UserId, UserAppData> UserMap;
+
 class testApp : public ofBaseApp{
 
 	public:
@@ -91,8 +112,13 @@ private:
 		void allocateTextures();
 		void cvProcess();
 		void setupNite();
+
+		virtual void exit();
+
 		ofTexture depthTex;
 		ofTexture colorTex;
 		ofTexture shadowTex;
+
+		UserMap userMap;
 };
 
