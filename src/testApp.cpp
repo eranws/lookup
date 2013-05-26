@@ -574,7 +574,7 @@ void testApp::allocateTextures()
 //	if (depthMat.empty()
 	depthTex.allocate(depthMat.cols, depthMat.rows, GL_LUMINANCE);
 	colorTex.allocate(colorMat.cols, colorMat.rows, GL_LUMINANCE);
-	shadowTex.allocate(colorMat.cols, colorMat.rows, GL_RGB);
+	shadowTex.allocate(colorMat.cols, colorMat.rows, GL_LUMINANCE);
 }
 
 void testApp::update()
@@ -674,7 +674,9 @@ void testApp::cvProcess()
 
 	//c2.setTo(255);
 	//c.copyTo(c2, m8); fix Res
-	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_RGB);
+
+	//TODO: crop relevant rectangle for display
+	shadowTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
 	
 }
 
