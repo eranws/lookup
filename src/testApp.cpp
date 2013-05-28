@@ -124,22 +124,7 @@ void testApp::setupGui()
 	//gui1->addRadio("RADIO HORIZONTAL", names, OFX_UI_ORIENTATION_HORIZONTAL, dim, dim); 
 	//gui1->addRadio("Depth Modes", depthModes, OFX_UI_ORIENTATION_VERTICAL, dim, dim); 
 
-	gui1->addSpacer(length-xInit, 2);
 
-	gui1->addWidgetDown(new ofxUILabel("V SLIDERS", OFX_UI_FONT_MEDIUM)); 
-	gui1->addSlider("0", 0.0, 10255.0, 150, dim, 160);
-	gui1->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-	gui1->addSlider("1", 0.0, 255.0, 150, dim, 160);
-	gui1->addSlider("2", 0.0, 255.0, 150, dim, 160);
-	gui1->addSlider("3", 0.0, 255.0, 150, dim, 160);
-	gui1->addSlider("4", 0.0, 255.0, 150, dim, 160);
-	gui1->addSlider("5", 0.0, 255.0, 150, dim, 160);
-	gui1->addSlider("6", 0.0, 255.0, 150, dim, 160);
-	gui1->addSlider("7", 0.0, 255.0, 150, dim, 160);
-	gui1->addSlider("8", 0.0, 255.0, 150, dim, 160);
-	gui1->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
-
-		
 	gui1->addSpacer(length-xInit, 2);
 	//gui1->addWidgetDown(new ofxUILabel("BUTTONS", OFX_UI_FONT_MEDIUM)); 
 	//gui1->addButton("DRAW GRID", false, dim, dim);
@@ -149,14 +134,6 @@ void testApp::setupGui()
 	gui1->addToggle( "Draw Scene", &toDrawScene, dim, dim);
 	gui1->addToggle( "Draw Side Viewports", &toDrawSideViewports, dim, dim);
 	
-	
-	
-	
-	gui1->addSpacer(length-xInit, 2);
-	gui1->addWidgetDown(new ofxUILabel("2D PAD", OFX_UI_FONT_MEDIUM)); 
-	gui1->add2DPad("PAD", ofPoint(0,length-xInit), ofPoint(0,120), ofPoint((length-xInit)*.5,120*.5), length-xInit,120);
-
-
 	gui1->setDrawBack(true);
 	gui1->setColorBack(ofColor::gray);
 	
