@@ -103,5 +103,11 @@ private:
 		ofTexture colorTex;
 		ofTexture shadowTex;
 
+		//gray cropping
+		float grayCropLowW;
+		float grayCropLowH;
+		float grayCropHighW;
+		float grayCropHighH;
+
 };
 

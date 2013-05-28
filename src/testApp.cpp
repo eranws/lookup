@@ -55,10 +55,22 @@ void testApp::setup(){
 }
 
 void testApp::drawVideo2D(){
-//	depthTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
-	shadowTex.draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
+
+	// Crop relevant rectangle for display
+	ofxUIRangeSlider* hCrop = (ofxUIRangeSlider*)gui1->getWidget("GRAY_CROP_H");		
+	ofxUIRangeSlider* wCrop = (ofxUIRangeSlider*)gui1->getWidget("GRAY_CROP_W");		
+
+	float sx = wCrop->getScaledValueLow();
+	float sw = wCrop->getScaledValueHigh() - sx;
+
+	float sy = hCrop->getScaledValueLow();
+	float sh = hCrop->getScaledValueHigh() - sy;
+	
+	shadowTex.drawSubsection(0,0, ofGetWindowWidth(), ofGetWindowHeight(), sx, sy, sw, sh);
+
 	Trees::draw();
 
+	drawVideo();
 }
 
 void testApp::drawShadow()
@@ -74,24 +86,41 @@ void testApp::drawVideo(){
 		return;
 	glDisable(GL_DEPTH_TEST);
 
+	ofPushStyle();
 	ofPushMatrix();
 
 
-//	ofTranslate(ofGetWindowWidth() - 2 * w, ofGetWindowHeight() - h, 0);
-//	ofScale(f, f, f);
-
 	float f = 0.5;
 	int dw = depthTex.getWidth() * f, dh = depthTex.getHeight() * f;
-	//	depthTex.draw(ofGetWindowWidth() - 2 * dw, ofGetWindowHeight() - dh, -0.1);
 	depthTex.draw(0, 0, -0.1, dw, dh);
 	//cf.draw();
 	//cf.getPolyline(0).draw();
 	
-	int cw = colorTex.getWidth() * f, ch = colorTex.getHeight() * f;
-	colorTex.draw(dw, 0, 0.1, cw, ch);
+	ofTranslate(dw, 0, 0);
+	ofScale(f, f);
 
-	//colorTex.draw(2 * cw ,0, 1); //scaled!
+	int cw = colorTex.getWidth();
+	int ch = colorTex.getHeight();
+	colorTex.draw(0, 0, 0.1, cw, ch);
+
+	ofxUIRangeSlider* hCrop = (ofxUIRangeSlider*)gui1->getWidget("GRAY_CROP_H");		
+	ofxUIRangeSlider* wCrop = (ofxUIRangeSlider*)gui1->getWidget("GRAY_CROP_W");		
+
+	float sx = wCrop->getScaledValueLow();
+	float sw = wCrop->getScaledValueHigh() - sx;
+
+	float sy = hCrop->getScaledValueLow();
+	float sh = hCrop->getScaledValueHigh() - sy;
+
+	ofSetColor(ofColor::red);
+	ofSetLineWidth(3);
+	ofNoFill();
+	ofRect(sx, sy, sw, sh);
+
+
 	ofPopMatrix();
+	ofPopStyle();
+
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -128,7 +157,14 @@ void testApp::setupGui()
 	gui1->addToggle( "Draw Grid", &toDrawGrid, dim, dim);
 	gui1->addToggle( "Draw Scene", &toDrawScene, dim, dim);
 	gui1->addToggle( "Draw Side Viewports", &toDrawSideViewports, dim, dim);
-	
+
+	gui1->addSpacer(length-xInit, 2);
+	gui1->addWidgetDown(new ofxUILabel("2D PAD", OFX_UI_FONT_MEDIUM));
+
+	gui1->addRangeSlider("GRAY_CROP_W", 0.0, 640, 0.0, 640.0, length-xInit,dim);
+	gui1->addRangeSlider("GRAY_CROP_H", 0.0, 1024, 0.0, 1024.0, length-xInit,dim);
+
+
 	gui1->setDrawBack(true);
 	gui1->setColorBack(ofColor::gray);
 	
@@ -293,7 +329,6 @@ void testApp::draw(){
 	// draw some labels
 	outputStrings.push_back(ofToString(nodeSwarm.size()));
 
-	drawVideo();
 
 	if(showHelpText)
 	{
@@ -650,7 +685,7 @@ void testApp::cvProcess()
 	//c2.setTo(255);
 	//c.copyTo(c2, m8); fix Res
 
-	//TODO: crop relevant rectangle for display
+	
 	shadowTex.loadData(c.ptr(), c.cols, c.rows, GL_LUMINANCE);
 	
 }
