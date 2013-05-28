@@ -149,6 +149,7 @@
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
     <ClCompile Include="..\..\..\addons\ofxProfile\src\ofxProfile.cpp" />
     <ClCompile Include="Trees.cpp" />
+    <ClCompile Include="UserAppData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BirdPart.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUIWidget.h" />
     <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUIWidgetWithLabel.h" />
     <ClInclude Include="Trees.h" />
+    <ClInclude Include="UserAppData.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs2010\openframeworksLib.vcxproj">

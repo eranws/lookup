@@ -46,6 +46,8 @@ void ofxDepthStream::setup(ofPtr<openni::Device> device, bool isVerbose)
 
 	}
 
+	setupNite();
+
 	startThread(false, isVerbose);
 }
 
@@ -53,6 +55,7 @@ void ofxDepthStream::exit()
 {
 	stopThread();
 	waitForThread();
+	nite::NiTE::shutdown();
 }
 
 void ofxDepthStream::threadedFunction()
@@ -84,6 +87,7 @@ void ofxDepthStream::threadedFunction()
 
 		pixels[1]->setFromPixels((const unsigned short*)frame.getData(), pixels[1]->getWidth(), pixels[1]->getHeight(), OF_IMAGE_GRAYSCALE);
 		swap(pixels[0], pixels[1]);
+		updateNite();
 
 		ofxProfileSectionPop();
 	}
@@ -131,3 +135,73 @@ void ofxDepthStream::setResolution640x480()
 			stream->setVideoMode(v[i]);
 	}
 }
+
+
+
+void ofxDepthStream::setupNite()
+{
+	nite::NiTE::initialize();
+	nite::Status niteRc;
+
+	niteRc = userTracker.create();
+	if (niteRc != nite::STATUS_OK)
+	{
+		printf("Couldn't create user tracker\n");
+		return;
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+//		MAP MKP MAPAMPAMAPAPAP  userTrackerFrame[i] = nite::UserTrackerFrameRef();
+	}
+	
+	printf("\nuserTracker.create - OK\n");
+
+}
+
+
+
+void ofxDepthStream::updateNite()
+{
+	nite::UserTrackerFrameRef  userTrackerFrame;
+	nite::Status niteRc = userTracker.readFrame(&userTrackerFrame);
+	if (niteRc != nite::STATUS_OK)
+	{
+		printf("Get next frame failed\n");
+		//			return;
+	}
+
+	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
+	for (int i = 0; i < users.getSize(); ++i)
+	{
+
+		const nite::UserData& user = users[i];
+		nite::UserId id = user.getId();
+
+		//			updateUserState(user,userTrackerFrame.getTimestamp());
+		if (user.isNew())
+		{
+			userTracker.startSkeletonTracking(id);
+			userMap[id];
+
+		}
+		else if (user.isVisible() && user.getSkeleton().getState() == nite::SKELETON_TRACKED)
+		{
+			userMap[id].update(user);
+			if (userMap[id].status.valid)
+			{
+				printf("FFF\n");
+//send event/SiGNAL!				nodeSwarm.addParticle(userMap[id].status.position, userMap[id].status.velocity);
+			}
+		}
+
+
+		else if (user.isLost())
+		{
+			userMap.erase(id);
+		}
+
+	}
+
+}
+

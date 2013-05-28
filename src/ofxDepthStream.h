@@ -1,6 +1,8 @@
 #pragma once
 #include "ofThread.h"
 #include "ofPixels.h"
+#include "NiTE.h"
+#include "..\UserAppData.h"
 
 namespace openni
 {
@@ -22,22 +24,29 @@ public:
 	ofPtr<openni::VideoStream> getStream() const { return stream; }
 
 	ofPtr<ofShortPixels> getPixels() const { return pixels[0]; }
-
+//	nite::UserTrackerFrameRef getUserTrackerFrame() const { return userTrackerFrame[0]; }
 
 	const vector<string>& getVideoModesString() const { return videoModesString; }
 	void setResolution640x480();
 
 	ofVec3f cameraToWorld(ofVec2f p); //Depth Camera?
+	nite::UserTracker userTracker;
 
 protected:
 	ofPtr<ofShortPixels> pixels[2];
 
 	virtual void threadedFunction();
 	void allocateBuffers();
-
 	ofPtr<openni::Device> device;
 	ofPtr<openni::VideoStream> stream;
 
 	const openni::SensorInfo* depthSensorInfo;
 	vector<string> videoModesString;
+	
+	void setupNite();
+	void updateNite();
+	
+	typedef std::map<nite::UserId, UserAppData> UserMap;
+	UserMap userMap;
+
 };
