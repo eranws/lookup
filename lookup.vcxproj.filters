@@ -115,6 +115,7 @@
     <ClCompile Include="Trees.cpp" />
     <ClCompile Include="BirdPart.cpp" />
     <ClCompile Include="UserAppData.cpp" />
+    <ClCompile Include="BirdEvents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -443,5 +444,6 @@
     <ClInclude Include="Trees.h" />
     <ClInclude Include="BirdPart.h" />
     <ClInclude Include="UserAppData.h" />
+    <ClInclude Include="BirdEvents.h" />
   </ItemGroup>
 </Project>

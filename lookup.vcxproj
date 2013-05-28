@@ -110,6 +110,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BirdEvents.cpp" />
     <ClCompile Include="BirdPart.cpp" />
     <ClCompile Include="src\Bird.cpp" />
     <ClCompile Include="src\Grid.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="UserAppData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BirdEvents.h" />
     <ClInclude Include="BirdPart.h" />
     <ClInclude Include="src\Bird.h" />
     <ClInclude Include="src\Grid.h" />

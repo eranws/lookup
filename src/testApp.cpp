@@ -2,6 +2,7 @@
 
 #include "ofxCv.h"
 #include "Utilities.h"
+#include "..\BirdEvents.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -49,6 +50,7 @@ void testApp::setup(){
 
 	cf.setAutoThreshold(false);
 
+	registerBirdEvents(this);
 
 }
 
@@ -651,6 +653,19 @@ void testApp::cvProcess()
 	//TODO: crop relevant rectangle for display
 	shadowTex.loadData(c.ptr(), c.cols, c.rows, GL_LUMINANCE);
 	
+}
+
+void testApp::createBird( BirdData& p )
+{
+	printf("TESTAPP: CREATE BIRD");
+	cout << p.position << " " << p.velocity << endl;
+	nodeSwarm.addParticle(p.position, p.velocity);
+}
+
+void testApp::exit()
+{
+	depthStream.exit();
+	colorStream.exit();
 }
 
 

@@ -16,6 +16,7 @@
 #define N_CAMERAS 4
 
 #include "NiTE.h"
+#include "..\BirdEvents.h"
 
 
 
@@ -28,6 +29,10 @@ class testApp : public ofBaseApp{
 
 		void keyPressed  (int key);
 		void windowResized(int w, int h);
+
+		void createBird(BirdData& p);
+
+		
 
 private:
 		ofxOniDevice oniDevice;
@@ -89,6 +94,9 @@ private:
 
 		void allocateTextures();
 		void cvProcess();
+
+		virtual void exit();
+
 
 
 		ofTexture depthTex;

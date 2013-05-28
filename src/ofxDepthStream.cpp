@@ -1,6 +1,7 @@
 #include "ofxDepthStream.h"
 #include "OpenNI.h"
 #include "ofxProfile.h"
+#include "..\BirdEvents.h"
 
 string toString( const openni::VideoMode& v )
 {
@@ -149,11 +150,6 @@ void ofxDepthStream::setupNite()
 		printf("Couldn't create user tracker\n");
 		return;
 	}
-
-	for (int i = 0; i < 2; i++)
-	{
-//		MAP MKP MAPAMPAMAPAPAP  userTrackerFrame[i] = nite::UserTrackerFrameRef();
-	}
 	
 	printf("\nuserTracker.create - OK\n");
 
@@ -168,7 +164,7 @@ void ofxDepthStream::updateNite()
 	if (niteRc != nite::STATUS_OK)
 	{
 		printf("Get next frame failed\n");
-		//			return;
+		return;
 	}
 
 	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
@@ -190,8 +186,11 @@ void ofxDepthStream::updateNite()
 			userMap[id].update(user);
 			if (userMap[id].status.valid)
 			{
-				printf("FFF\n");
-//send event/SiGNAL!				nodeSwarm.addParticle(userMap[id].status.position, userMap[id].status.velocity);
+				BirdData bd;
+				bd.position = userMap[id].status.position;
+				bd.velocity = userMap[id].status.velocity;
+			
+				ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
 			}
 		}
 
