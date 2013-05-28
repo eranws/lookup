@@ -81,16 +81,21 @@ void testApp::drawVideo(){
 
 	ofPushMatrix();
 
+
+//	ofTranslate(ofGetWindowWidth() - 2 * w, ofGetWindowHeight() - h, 0);
+//	ofScale(f, f, f);
+
 	float f = 0.5;
-	int w = depthTex.getWidth() * f, h = depthTex.getHeight() * f;
-
-	ofTranslate(ofGetWindowWidth() - 2 * w, ofGetWindowHeight() - h, 0);
-	ofScale(f, f, f);
-
-	depthTex.draw(0, 0, -0.1);
-	cf.draw();
+	int dw = depthTex.getWidth() * f, dh = depthTex.getHeight() * f;
+	//	depthTex.draw(ofGetWindowWidth() - 2 * dw, ofGetWindowHeight() - dh, -0.1);
+	depthTex.draw(0, 0, -0.1, dw, dh);
+	//cf.draw();
 	//cf.getPolyline(0).draw();
-	colorTex.draw(2 * w ,0, 1); //scaled!
+	
+	int cw = colorTex.getWidth() * f, ch = colorTex.getHeight() * f;
+	colorTex.draw(dw, 0, 0.1, cw, ch);
+
+	//colorTex.draw(2 * cw ,0, 1); //scaled!
 	ofPopMatrix();
 	glEnable(GL_DEPTH_TEST);
 }
@@ -113,7 +118,7 @@ void testApp::setupGui()
 
 	gui1->addWidgetDown(new ofxUILabel("Depth Cutoff", OFX_UI_FONT_MEDIUM)); 
 	gui1->addRangeSlider("RSLIDER", 0.0, 10000.0, 450.0, 2000.0, length-xInit,dim);
-	gui1->addSlider("colorThreshold", 1, 255, 200, length-xInit,dim);
+	gui1->addSlider("colorThreshold", 1, 255, 50, length-xInit,dim);
 	gui1->addSpacer(length-xInit, 2);
 	vector<string> depthModes = depthStream.getVideoModesString();
 	//gui1->addRadio("RADIO HORIZONTAL", names, OFX_UI_ORIENTATION_HORIZONTAL, dim, dim); 
@@ -551,15 +556,14 @@ void testApp::updateMats()
 	ofPtr<ofPixels> colorPixels = colorStream.getPixels();
 	cv::Mat fullColorMat = ofxCv::toCv(*colorPixels);
 	
-	cv::imshow("fullColorMat", fullColorMat);
 //	cout << fullColorMat;
-	int x, y, w, h;
-	colorStream.getStream()->getCropping(&x, &y, &w, &h);
+//	int x, y, w, h;
+//	colorStream.getStream()->getCropping(&x, &y, &w, &h);
 //	colorMat = fullColorMat(cv::Range(y, y+h), cv::Range(x, x+w)).clone();
 	colorMat = fullColorMat;
 	cv::imshow("colorMat", colorMat);
 
-	colorTex.loadData(colorMat.ptr(), w, h, GL_LUMINANCE);
+	colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
 
 	ofPtr<ofShortPixels> depthPixels = depthStream.getPixels();
 	depthMat = ofxCv::toCv(*depthPixels);
@@ -664,19 +668,19 @@ void testApp::cvProcess()
 //	cvtColor(c, c, CV_RGB2GRAY);
 
 	c = c > s->getScaledValue();
-	imshow("c",c);
+//	imshow("c",c);
 
-	Mat c2;
-	cvtColor(c, c2, CV_GRAY2RGB);
+//	Mat c2;
+//	cvtColor(c, c2, CV_GRAY2RGB);
 
-	imshow("c2",c2);
+//	imshow("c2",c2);
 	waitKey(1);
 
 	//c2.setTo(255);
 	//c.copyTo(c2, m8); fix Res
 
 	//TODO: crop relevant rectangle for display
-	shadowTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
+	shadowTex.loadData(c.ptr(), c.cols, c.rows, GL_LUMINANCE);
 	
 }
 
