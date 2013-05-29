@@ -670,7 +670,6 @@ void testApp::cvProcess()
 
 	//m8 = 255 - m8; //black shadow
 		
-	cv::morphologyEx(m8, m8, CV_MOP_DILATE, cv::getStructuringElement(CV_SHAPE_ELLIPSE, cv::Size(11, 11)));
 
 
 	cv::Mat depthMaskHD;
@@ -678,21 +677,24 @@ void testApp::cvProcess()
 
 	cv::resize(depthMaskCrop, depthMaskHD, cv::Size(), 2, 2);
 
-	Mat ppp(cv::Mat(1024, 640, depthMaskHD.type()));
+	Mat depthMaskHdCropped(cv::Mat(1024, 640, depthMaskHD.type()));
 	int vOffset = 32; //HD adds 32 rows on top and bottom
-	depthMaskHD.copyTo(ppp(cv::Range(0 + vOffset, 960 + vOffset), cv::Range::all()));
+	depthMaskHD.copyTo(depthMaskHdCropped(cv::Range(0 + vOffset, 960 + vOffset), cv::Range::all()));
+	cv::morphologyEx(depthMaskHdCropped, depthMaskHdCropped, CV_MOP_DILATE, cv::getStructuringElement(CV_SHAPE_ELLIPSE, cv::Size(11, 11)));
 
 	ofxUISlider* s = (ofxUISlider*)gui1->getWidget("colorThreshold");
-	c = c > s->getScaledValue();
-//	imshow("c",c);
 
+	GaussianBlur(c, c, cv::Size(3,3), 1);
+
+	int thresh = s->getScaledValue();
+//	cv::adaptiveThreshold(c, c, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 7, thresh);
+	c = c > thresh;
+
+	cv::medianBlur(c, c, 7);
 	Mat c2(c.size(), c.type());
 	c2.setTo(255);
 
-	imshow("ppp",ppp);
-	waitKey(1);
-
-	c.copyTo(c2, ppp);// fix Res
+	c.copyTo(c2, depthMaskHdCropped);// fix Res
 	
 	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_LUMINANCE);
 	
