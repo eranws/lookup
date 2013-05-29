@@ -713,6 +713,7 @@ void testApp::exit()
 
 void testApp::updateUsers( UserDataArray& usersData )
 {
+	return;
 	const nite::Array<nite::UserData>& users = usersData.data;
 
 	cv::Mat c = colorMat.clone();
