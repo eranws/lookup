@@ -29,6 +29,7 @@ public:
 	void setResolution640x480();
 
 	ofVec3f cameraToWorld(ofVec2f p); //Depth Camera?
+	ofVec2f worldToCamera(ofVec3f p);
 	nite::UserTracker userTracker;
 
 protected:
@@ -44,5 +45,5 @@ protected:
 	
 	void setupNite();
 	void updateNite();
-	
+
 };

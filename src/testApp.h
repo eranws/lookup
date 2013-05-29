@@ -33,7 +33,6 @@ class testApp : public ofBaseApp{
 
 		void createBird(BirdData& p);
 		void updateUsers(UserDataArray& userDataArray);
-		
 
 private:
 		ofxOniDevice oniDevice;
@@ -117,3 +116,5 @@ private:
 
 };
 
+
+ofVec2f toGrayHD(ofVec2f depthPt);

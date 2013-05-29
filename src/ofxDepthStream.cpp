@@ -112,6 +112,14 @@ ofVec3f ofxDepthStream::cameraToWorld(ofVec2f p)
 	return world;
 }
 
+ofVec2f ofxDepthStream::worldToCamera(ofVec3f p)
+{
+	ofVec2f camera;
+	float ignoreThis;
+	openni::CoordinateConverter::convertWorldToDepth(*stream, p.x, p.y, p.z, &camera.x, &camera.y, &ignoreThis);
+	return camera;
+}
+
 
 
 void ofxDepthStream::allocateBuffers()
