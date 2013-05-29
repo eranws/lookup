@@ -157,6 +157,7 @@ void testApp::setupGui()
 	gui1->addToggle( "Draw Grid", &toDrawGrid, dim, dim);
 	gui1->addToggle( "Draw Scene", &toDrawScene, dim, dim);
 	gui1->addToggle( "Draw Side Viewports", &toDrawSideViewports, dim, dim);
+	gui1->addToggle( "Mirror", &toggleMirror, dim, dim);
 
 	gui1->addSpacer(length-xInit, 2);
 	gui1->addWidgetDown(new ofxUILabel("2D PAD", OFX_UI_FONT_MEDIUM));
@@ -178,9 +179,11 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 	int kind = e.widget->getKind(); 
 	cout << "got event from: " << name << endl; 	
 
-	if(name == "DRAW GRID")
+	if(name == "Mirror")
 	{
 		ofxUIButton *button = (ofxUIButton *) e.widget; 
+		depthStream.getStream()->setMirroringEnabled(button->getValue());
+		colorStream.getStream()->setMirroringEnabled(button->getValue());
 		//bdrawGrid = button->getValue(); 
 	}
 	else if(name == "D_GRID")

@@ -81,6 +81,8 @@ private:
 		bool toDrawSideViewports;
 		bool showHelpText;
 
+		bool toggleMirror;
+
 		ofxCv::ContourFinder cf;
 		std::vector<string> outputStrings;
 
