@@ -2,6 +2,7 @@
 #include "OpenNI.h"
 #include "ofxProfile.h"
 #include "..\BirdEvents.h"
+#include "NiTE.h"
 
 string toString( const openni::VideoMode& v )
 {
@@ -167,40 +168,23 @@ void ofxDepthStream::updateNite()
 		return;
 	}
 
+	
 	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
+	
 	for (int i = 0; i < users.getSize(); ++i)
 	{
-
 		const nite::UserData& user = users[i];
 		nite::UserId id = user.getId();
-
-		//			updateUserState(user,userTrackerFrame.getTimestamp());
 		if (user.isNew())
 		{
 			userTracker.startSkeletonTracking(id);
-			userMap[id];
-
 		}
-		else if (user.isVisible() && user.getSkeleton().getState() == nite::SKELETON_TRACKED)
-		{
-			userMap[id].update(user);
-			if (userMap[id].status.valid)
-			{
-				BirdData bd;
-				bd.position = userMap[id].status.position;
-				bd.velocity = userMap[id].status.velocity;
-			
-				ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
-			}
-		}
-
-
-		else if (user.isLost())
-		{
-			userMap.erase(id);
-		}
-
 	}
+
+	
+	UserDataArray uda(users);
+
+	ofNotifyEvent(getBirdEvents().updateUsers, uda); //TODO send id
 
 }
 

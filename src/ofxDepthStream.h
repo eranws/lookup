@@ -2,7 +2,6 @@
 #include "ofThread.h"
 #include "ofPixels.h"
 #include "NiTE.h"
-#include "..\UserAppData.h"
 
 namespace openni
 {
@@ -46,7 +45,4 @@ protected:
 	void setupNite();
 	void updateNite();
 	
-	typedef std::map<nite::UserId, UserAppData> UserMap;
-	UserMap userMap;
-
 };

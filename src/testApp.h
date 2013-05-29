@@ -17,6 +17,7 @@
 
 #include "NiTE.h"
 #include "..\BirdEvents.h"
+#include "..\UserAppData.h"
 
 
 
@@ -31,7 +32,7 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 
 		void createBird(BirdData& p);
-
+		void updateUsers(UserDataArray& userDataArray);
 		
 
 private:
@@ -108,6 +109,11 @@ private:
 		float grayCropLowH;
 		float grayCropHighW;
 		float grayCropHighH;
+
+		
+
+		typedef std::map<nite::UserId, UserAppData> UserMap;
+		UserMap userMap;
 
 };
 

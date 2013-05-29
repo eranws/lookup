@@ -708,5 +708,37 @@ void testApp::exit()
 	colorStream.exit();
 }
 
+void testApp::updateUsers( UserDataArray& usersData )
+{
+	const nite::Array<nite::UserData>& users = usersData.data;
+
+	for (int i = 0; i < users.getSize(); ++i)
+	{
+
+		const nite::UserData& user = users[i];
+		nite::UserId id = user.getId();
+
+		if (user.isVisible() && user.getSkeleton().getState() == nite::SKELETON_TRACKED)
+		{
+			userMap[id].update(user);
+			if (userMap[id].status.valid)
+			{
+				BirdData bd;
+				bd.position = userMap[id].status.position;
+				bd.velocity = userMap[id].status.velocity;
+
+				ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
+			}
+		}
+
+
+		else if (user.isLost())
+		{
+			userMap.erase(id);
+		}
+
+	}
+}
+
 
 
