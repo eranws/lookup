@@ -713,6 +713,7 @@ void testApp::updateUsers( UserDataArray& usersData )
 	const nite::Array<nite::UserData>& users = usersData.data;
 
 	cv::Mat c = colorMat.clone();
+	cv::Mat d = depthMat.clone();
 
 	for (int i = 0; i < users.getSize(); ++i)
 	{
@@ -732,9 +733,8 @@ void testApp::updateUsers( UserDataArray& usersData )
 				ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
 			}
 
-			user.getSkeleton().getJoint(nite::JOINT_HEAD);
 			const nite::Skeleton& skeleton = user.getSkeleton();
-			const nite::SkeletonJoint& head = skeleton.getJoint(nite::JOINT_HEAD);
+			const nite::SkeletonJoint& head = skeleton.getJoint(nite::JOINT_RIGHT_HAND);
 			if (head.getPositionConfidence() > .5)
 			{
 				nite::Point3f nitePos = head.getPosition();
@@ -756,15 +756,19 @@ void testApp::updateUsers( UserDataArray& usersData )
 				ofVec2f grayPtTL = toGrayHD(depthPtTL);
 				ofVec2f grayPtBR = toGrayHD(depthPtBR);
 
-				cv::rectangle(c,  cv::Point(grayPtTL.x, grayPtTL.y),  cv::Point(grayPtBR.x, grayPtBR.y), 3);
+				cv::Point grayPtTLCV(grayPtTL.x, grayPtTL.y);
+				cv::Point grayPtBRCV(grayPtBR.x, grayPtBR.y);
+				cv::rectangle(c, grayPtTLCV , grayPtBRCV , 3);
 
-
+				if (grayPtTL.x > 0 && grayPtTL.y > 0 && grayPtBR.x < 640 && grayPtBR.y < 1024)
+				{
+					cv::Mat rHandCrop = c(cv::Rect(grayPtTLCV, grayPtBRCV));
+					imshow("rH", rHandCrop);
+				}
+				
+				
 				cv::circle(c, cv::Point(grayPt.x, grayPt.y), 4, CV_RGB(0, 0, 0));
 				cv::circle(c, cv::Point(grayPt.x, grayPt.y), 3, CV_RGB(255, 255, 255));
-				cout << "DP:" << grayPt << " ";
-				//		printf("H: %d. (%5.2f, %5.2f, %5.2f)\n", user.getId(), head.getPosition().x, head.getPosition().y, head.getPosition().z);
-				//userOutputStrings.,		
-				printf("H: %d. %5.2f", user.getId(), head.getPosition().z);
 			}
 		}
 		else if (user.isLost())
