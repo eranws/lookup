@@ -568,7 +568,7 @@ void testApp::updateMats()
 //	colorStream.getStream()->getCropping(&x, &y, &w, &h);
 //	colorMat = fullColorMat(cv::Range(y, y+h), cv::Range(x, x+w)).clone();
 	colorMat = fullColorMat;
-	cv::imshow("colorMat", colorMat);
+//	cv::imshow("colorMat", colorMat);
 
 	colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
 
@@ -669,24 +669,29 @@ void testApp::cvProcess()
 		
 	cv::morphologyEx(m8, m8, CV_MOP_DILATE, cv::getStructuringElement(CV_SHAPE_ELLIPSE, cv::Size(11, 11)));
 
-	
-	ofxUISlider* s = (ofxUISlider*)gui1->getWidget("colorThreshold");
-//	cvtColor(c, c, CV_RGB2GRAY);
 
+	cv::Mat depthMaskHD;
+	cv::Mat depthMaskCrop = depthMask(cv::Range::all(), cv::Range(160, 480));
+
+	cv::resize(depthMaskCrop, depthMaskHD, cv::Size(), 2, 2);
+
+	Mat ppp(cv::Mat(1024, 640, depthMaskHD.type()));
+	int vOffset = 32; //HD adds 32 rows on top and bottom
+	depthMaskHD.copyTo(ppp(cv::Range(0 + vOffset, 960 + vOffset), cv::Range::all()));
+
+	ofxUISlider* s = (ofxUISlider*)gui1->getWidget("colorThreshold");
 	c = c > s->getScaledValue();
 //	imshow("c",c);
 
-//	Mat c2;
-//	cvtColor(c, c2, CV_GRAY2RGB);
+	Mat c2(c.size(), c.type());
+	c2.setTo(255);
 
-//	imshow("c2",c2);
+	imshow("ppp",ppp);
 	waitKey(1);
 
-	//c2.setTo(255);
-	//c.copyTo(c2, m8); fix Res
-
+	c.copyTo(c2, ppp);// fix Res
 	
-	shadowTex.loadData(c.ptr(), c.cols, c.rows, GL_LUMINANCE);
+	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_LUMINANCE);
 	
 }
 
