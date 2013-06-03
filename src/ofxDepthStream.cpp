@@ -19,6 +19,7 @@ void ofxDepthStream::setup(ofPtr<openni::Device> device, bool isVerbose)
 
 	openni::Status rc;
 
+	
 	depthSensorInfo = device->getSensorInfo(openni::SENSOR_DEPTH);
 	if (depthSensorInfo != NULL)
 	{
@@ -39,14 +40,16 @@ void ofxDepthStream::setup(ofPtr<openni::Device> device, bool isVerbose)
 
 	//setResolution640x480(); //HACKHACK
 
-	allocateBuffers();
 
+	/*
 	rc = stream->start();
 	if (rc != openni::STATUS_OK)
 	{
 		throw ("Couldn't start the depth stream\n%s\n", openni::OpenNI::getExtendedError());
 
 	}
+	*/
+	allocateBuffers();
 
 	setupNite();
 
@@ -68,15 +71,20 @@ void ofxDepthStream::threadedFunction()
 	{
 		ofxProfileSectionPush("depthStream update");
 		
-		openni::VideoFrameRef frame;
-		rc = stream->readFrame(&frame);
-		if (rc != openni::STATUS_OK)
-		{
-			printf("Wait failed\n");
-			continue;
-		}
+		updateNite();
 
-		if (frame.getVideoMode().getPixelFormat() != openni::PIXEL_FORMAT_DEPTH_1_MM && frame.getVideoMode().getPixelFormat() != openni::PIXEL_FORMAT_DEPTH_100_UM)
+		
+		openni::VideoFrameRef frame = userTrackerFrame.getDepthFrame();
+		//rc = stream->readFrame(&frame);
+		//if (rc != openni::STATUS_OK)
+		//{
+		//	printf("Wait failed\n");
+		//	continue;
+		//}
+
+		openni::PixelFormat pixelFormat = frame.getVideoMode().getPixelFormat();
+
+		if (pixelFormat != openni::PIXEL_FORMAT_DEPTH_1_MM && pixelFormat != openni::PIXEL_FORMAT_DEPTH_100_UM)
 		{
 			printf("Unexpected frame format\n");
 			continue;
@@ -89,7 +97,6 @@ void ofxDepthStream::threadedFunction()
 
 		pixels[1]->setFromPixels((const unsigned short*)frame.getData(), pixels[1]->getWidth(), pixels[1]->getHeight(), OF_IMAGE_GRAYSCALE);
 		swap(pixels[0], pixels[1]);
-		updateNite();
 
 		ofxProfileSectionPop();
 	}
@@ -168,14 +175,13 @@ void ofxDepthStream::setupNite()
 
 void ofxDepthStream::updateNite()
 {
-	nite::UserTrackerFrameRef  userTrackerFrame;
+	
 	nite::Status niteRc = userTracker.readFrame(&userTrackerFrame);
 	if (niteRc != nite::STATUS_OK)
 	{
 		printf("Get next frame failed\n");
 		return;
 	}
-
 	
 	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
 	

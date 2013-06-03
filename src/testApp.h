@@ -82,6 +82,8 @@ private:
 		bool showHelpText;
 
 		bool toggleMirror;
+		bool toggleExposure;
+		bool toggleGain;
 
 		ofxCv::ContourFinder cf;
 		std::vector<string> outputStrings;

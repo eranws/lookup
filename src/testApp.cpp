@@ -165,6 +165,11 @@ void testApp::setupGui()
 	gui1->addRangeSlider("GRAY_CROP_W", 0.0, 640, 0.0, 640.0, length-xInit,dim);
 	gui1->addRangeSlider("GRAY_CROP_H", 0.0, 1024, 0.0, 1024.0, length-xInit,dim);
 
+	gui1->addToggle("Toggle Exposure", &toggleExposure, dim, dim);
+	gui1->addToggle("Toggle Gain", &toggleGain, dim, dim);
+	gui1->addSlider("Gain", 0.0, 1600, 1570, length-xInit,dim);
+	gui1->addSlider("Exposure", 1.0, 30.0, 30.0, length-xInit,dim);
+
 
 	gui1->setDrawBack(true);
 	gui1->setColorBack(ofColor::gray);
@@ -186,6 +191,27 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 		colorStream.getStream()->setMirroringEnabled(button->getValue());
 		//bdrawGrid = button->getValue(); 
 	}
+	else if(name == "Toggle Exposure")
+	{
+		ofxUIButton* button = (ofxUIButton*) e.widget; 
+		openni::Status rc = colorStream.getStream()->getCameraSettings()->setAutoExposureEnabled(button->getValue());
+	}
+	else if(name == "Toggle Gain")
+	{
+		ofxUIButton* button = (ofxUIButton*) e.widget; 
+		openni::Status rc = colorStream.getStream()->getCameraSettings()->setAutoWhiteBalanceEnabled(button->getValue());
+	}
+	else if(name == "Exposure")
+	{
+		ofxUISlider* slider = (ofxUISlider*) e.widget; 
+		openni::Status rc = colorStream.getStream()->getCameraSettings()->setExposure((int)slider->getScaledValue());
+	}
+	else if(name == "Gain")
+	{
+		ofxUISlider* slider = (ofxUISlider*) e.widget; 
+		openni::Status rc = colorStream.getStream()->getCameraSettings()->setGain(slider->getScaledValue());
+	}
+	
 	else if(name == "D_GRID")
 	{
 		ofxUIToggle *toggle = (ofxUIToggle *) e.widget; 
@@ -715,7 +741,7 @@ void testApp::exit()
 
 void testApp::updateUsers( UserDataArray& usersData )
 {
-	return;
+	//return;
 	const nite::Array<nite::UserData>& users = usersData.data;
 
 	cv::Mat c = colorMat.clone();

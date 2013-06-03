@@ -40,6 +40,8 @@ protected:
 	ofPtr<openni::Device> device;
 	ofPtr<openni::VideoStream> stream;
 
+	nite::UserTrackerFrameRef  userTrackerFrame;
+
 	const openni::SensorInfo* depthSensorInfo;
 	vector<string> videoModesString;
 	
