@@ -33,6 +33,7 @@ class testApp : public ofBaseApp{
 
 		void createBird(BirdData& p);
 		void updateUsers(UserDataArray& userDataArray);
+		void updateUserTracker(nite::UserTrackerFrameRef& userTrackerFrame);
 
 private:
 		ofxOniDevice oniDevice;

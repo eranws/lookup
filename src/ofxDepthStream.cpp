@@ -183,6 +183,11 @@ void ofxDepthStream::updateNite()
 		return;
 	}
 	
+	nite::UserTrackerFrameRef t = userTrackerFrame;
+	ofNotifyEvent(getBirdEvents().updateUserTracker, t);
+
+	
+
 	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
 	
 	for (int i = 0; i < users.getSize(); ++i)

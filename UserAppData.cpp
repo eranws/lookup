@@ -20,7 +20,7 @@ void UserAppData::update( const nite::UserData& user )
 	{
 		//		printf("H: %d. (%5.2f, %5.2f, %5.2f)\n", user.getId(), head.getPosition().x, head.getPosition().y, head.getPosition().z);
 		//userOutputStrings.,		
-		printf("H: %d. %5.2f", user.getId(), head.getPosition().z);
+		//printf("H: %d. %5.2f", user.getId(), head.getPosition().z);
 	}
 
 	if (leftHand.getPositionConfidence() > .5 && leftElbow.getPositionConfidence() > .5){
@@ -70,6 +70,6 @@ void UserAppData::update( const nite::UserData& user )
 
 	}
 
-	printf("\n"); 
+	//printf("\n"); 
 
 }

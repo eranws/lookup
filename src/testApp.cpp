@@ -821,3 +821,14 @@ ofVec2f toGrayHD( ofVec2f depthPt )
 	grayPt.y += 32;
 	return grayPt;
 }
+
+
+void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
+{
+	nite::UserMap userMap = userTrackerFrame.getUserMap();
+	cv::Mat users(userMap.getHeight(), userMap.getWidth(), CV_16UC1, (void*)userMap.getPixels());
+	cv::Mat u8 = users > 0; 
+	imshow("U", u8);
+	cv::waitKey(1);
+
+}
