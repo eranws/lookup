@@ -823,6 +823,12 @@ ofVec2f toGrayHD( ofVec2f depthPt )
 }
 
 
+cv::Scalar white(255, 255, 255);
+cv::Scalar blue(255,0,0);
+cv::Scalar green(0,255,0);
+cv::Scalar red(0,0,255);
+cv::Scalar black(0,0,0);
+
 void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 {
 	nite::UserMap userMap = userTrackerFrame.getUserMap();
@@ -852,30 +858,23 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 	{
 		// iterate through all the top-level contours,
 		// draw each connected component with its own random color
-		int idx = 0;
-		for(int i = 0; i < hierarchy.size(); i++)
+		for(int ci = 0; ci < hierarchy.size(); ci++)
 		{
-			//find biggest cc
-			if (cv::contourArea(contours[idx]) < cv::contourArea(contours[i]))
-				idx = i;
-		}
+		
+			vector<cv::Point>& contour = contours[ci];
+			cv::drawContours( dst, contours, ci, blue, 2, 8, hierarchy );
 
-		cv::Scalar white(255, 255, 255);
-		cv::Scalar blue(255,0,0);
-		cv::Scalar green(0,255,0);
-		cv::Scalar red(0,0,255);
-		cv::Scalar black(0,0,0);
-
-		cv::drawContours( dst, contours, idx, blue, 2, 8, hierarchy );
-
-		if(cv::contourArea(contours[idx]) > 15)
-		{
+			if(cv::contourArea(contour) < 100)
+			{
+				continue;
+			}
+			
 			//fingerPoint.push_back(contours[idx][0]);
-			for (int i = 1; i < contours[idx].size();i++)
+			for (int i = 1; i < contours[ci].size();i++)
 			{
 				//check if peak
-				cv::Point2f vec1 = contours[idx][i - 1] - contours[idx][i];
-				cv::Point2f vec2 = contours[idx][(i + 1) % contours[idx].size()] - contours[idx][i];
+				cv::Point2f vec1 = contour[i - 1] - contour[i];
+				cv::Point2f vec2 = contour[(i + 1) % contour.size()] - contour[i];
 
 				double vec1norm = cv::norm(vec1);
 				double vec2norm = cv::norm(vec2);
@@ -891,7 +890,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 				}
 				else
 				{
-					cv::circle(dst,  contours[idx][i], 3, red, -1 );
+					cv::circle(dst,  contour[i], 3, red, -1 );
 				}
 			}
 		}
