@@ -827,8 +827,82 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 {
 	nite::UserMap userMap = userTrackerFrame.getUserMap();
 	cv::Mat users(userMap.getHeight(), userMap.getWidth(), CV_16UC1, (void*)userMap.getPixels());
+
+	// TODO: split for different users
 	cv::Mat u8 = users > 0; 
+
+
+	cv::Mat dst(u8.size(), CV_8UC3);
+
+	//detect peaks
+	std::vector<std::vector<cv::Point> > contours;
+	std::vector<cv::Vec4i> hierarchy;
+
+	cv::findContours(u8.clone(), contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+
+	//approximate with lines
+	for( size_t k = 0; k < contours.size(); k++ )
+	{
+		int epsilon = 7;//higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
+		approxPolyDP(cv::Mat(contours[k]), contours[k], epsilon, true); 
+	}
+
+
+	if( !contours.empty() && !hierarchy.empty() )
+	{
+		// iterate through all the top-level contours,
+		// draw each connected component with its own random color
+		int idx = 0;
+		for(int i = 0; i < hierarchy.size(); i++)
+		{
+			//find biggest cc
+			if (cv::contourArea(contours[idx]) < cv::contourArea(contours[i]))
+				idx = i;
+		}
+
+		cv::Scalar white(255, 255, 255);
+		cv::Scalar blue(255,0,0);
+		cv::Scalar green(0,255,0);
+		cv::Scalar red(0,0,255);
+		cv::Scalar black(0,0,0);
+
+		cv::drawContours( dst, contours, idx, blue, 2, 8, hierarchy );
+
+		if(cv::contourArea(contours[idx]) > 15)
+		{
+			//fingerPoint.push_back(contours[idx][0]);
+			for (int i = 1; i < contours[idx].size();i++)
+			{
+				//check if peak
+				cv::Point2f vec1 = contours[idx][i - 1] - contours[idx][i];
+				cv::Point2f vec2 = contours[idx][(i + 1) % contours[idx].size()] - contours[idx][i];
+
+				double vec1norm = cv::norm(vec1);
+				double vec2norm = cv::norm(vec2);
+
+				vec1.x /= vec1norm;
+				vec1.y /= vec1norm;
+				vec2.x /= vec2norm;
+				vec2.y /= vec2norm;
+
+				if ( vec1.dot(vec2) < 0.2 )
+				{
+					continue;
+				}
+				else
+				{
+					cv::circle(dst,  contours[idx][i], 3, red, -1 );
+				}
+			}
+		}
+	}
+
+
+
+	imshow("dst", dst);
 	imshow("U", u8);
+	
+	
 	cv::waitKey(1);
 
 }
