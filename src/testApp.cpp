@@ -872,6 +872,11 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 				}
 
 				//fingerPoint.push_back(contours[idx][0]);
+
+				vector<int> candidates;
+				vector<int> valleys;
+				vector<int> peaks;
+
 				for (int i = 1; i < contours[ci].size();i++)
 				{
 					//check if peak
@@ -894,9 +899,17 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 					if ( vec1.dot(vec2) > 0.2)
 					{
 						double cr = vec1.cross(vec2);
+						bool isPeak = cr > 0;
 
 						cv::circle(dst,  contour[i], 3, white, 1 );
-						cv::circle(dst,  contour[i], 2, cr > 0 ? red : blue, -1 );
+						cv::circle(dst,  contour[i], 2, isPeak ? red : blue, -1 );
+
+						candidates.push_back(i);
+						if (isPeak)
+							peaks.push_back(i);
+						else
+							valleys.push_back(i);
+
 					}
 
 					if (vec1.dot(vec3) > 0.2 && vec2norm < 30)
@@ -905,13 +918,32 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 						cv::circle(dst,  contour[i], 2 , green, -1 );
 						//stringstream ss; ss << vec2norm;
 						//cv::putText(dst, ss.str(), contour[i], CV_FONT_BLACK, 1, white );
+
+						candidates.push_back(i);
+						peaks.push_back(i);
+						
 					}
+				} // i < contour.size
+
+
+				const int valleysMinSize = 2;
+				if (valleys.size() > valleysMinSize)
+				{
+					for (int i = 0; i < valleys.size() - valleysMinSize; i++)
+					{
+						if (valleys[i + valleysMinSize] - valleys[i] < 7)
+							cv::circle(dst,  contour[valleys[i]], 5 , white, 2);
+					}
+
 				}
-			}
-		}
 
 
+			} // ci < hierarchy.size()
+		} // if contours && hierarchy !empty
 	}//userIndex
+
+	
+	
 	imshow("dst", dst);
 	//imshow("U", u8);
 
