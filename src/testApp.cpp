@@ -792,11 +792,11 @@ void testApp::updateUsers( UserDataArray& usersData )
 				cv::Point grayPtBRCV(grayPtBR.x, grayPtBR.y);
 				cv::rectangle(c, grayPtTLCV , grayPtBRCV , 3);
 
-				if (grayPtTL.x > 0 && grayPtTL.y > 0 && grayPtBR.x < 640 && grayPtBR.y < 1024)
-				{
-					cv::Mat rHandCrop = c(cv::Rect(grayPtTLCV, grayPtBRCV));
-					imshow("rH", rHandCrop);
-				}
+				//if (grayPtTL.x > 0 && grayPtTL.y > 0 && grayPtBR.x < 640 && grayPtBR.y < 1024)
+				//{
+					//cv::Mat rHandCrop = c(cv::Rect(grayPtTLCV, grayPtBRCV));
+					//imshow("rH", rHandCrop);
+				//}
 				
 				
 				cv::circle(c, cv::Point(grayPt.x, grayPt.y), 4, CV_RGB(0, 0, 0));
