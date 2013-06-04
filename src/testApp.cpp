@@ -862,7 +862,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		{
 		
 			vector<cv::Point>& contour = contours[ci];
-			cv::drawContours( dst, contours, ci, blue, 2, 8, hierarchy );
+			cv::drawContours( dst, contours, ci, white, 1, 8, hierarchy );
 
 			if(cv::contourArea(contour) < 100)
 			{
@@ -875,22 +875,34 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 				//check if peak
 				cv::Point2f vec1 = contour[i - 1] - contour[i];
 				cv::Point2f vec2 = contour[(i + 1) % contour.size()] - contour[i];
+				cv::Point2f vec3 = contour[(i + 2) % contour.size()] - contour[(i + 1) % contour.size()];
 
 				double vec1norm = cv::norm(vec1);
 				double vec2norm = cv::norm(vec2);
+				double vec3norm = cv::norm(vec3);
 
 				vec1.x /= vec1norm;
 				vec1.y /= vec1norm;
 				vec2.x /= vec2norm;
 				vec2.y /= vec2norm;
+				vec3.x /= vec3norm;
+				vec3.y /= vec3norm;
 
-				if ( vec1.dot(vec2) < 0.2 )
+
+				if ( vec1.dot(vec2) > 0.2)
 				{
-					continue;
+					double cr = vec1.cross(vec2);
+					
+					cv::circle(dst,  contour[i], 3, white, 1 );
+					cv::circle(dst,  contour[i], 2, cr > 0 ? red : blue, -1 );
 				}
-				else
-				{
-					cv::circle(dst,  contour[i], 3, red, -1 );
+
+				 if (vec1.dot(vec3) > 0.2 && vec2norm < 30)
+				 {
+					 cv::circle(dst,  contour[i], 3, white, 1 );
+					 cv::circle(dst,  contour[i], 2 , green, -1 );
+					//stringstream ss; ss << vec2norm;
+					//cv::putText(dst, ss.str(), contour[i], CV_FONT_BLACK, 1, white );
 				}
 			}
 		}
