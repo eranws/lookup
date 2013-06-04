@@ -40,7 +40,7 @@ void testApp::setup(){
 	recorder.addStream(colorStream.getStream());
 	updateMats();
 	allocateTextures();
-	
+
 	setupGui();
 	//gui1->loadSettings("settings.xml");
 
@@ -65,7 +65,7 @@ void testApp::drawVideo2D(){
 
 	float sy = hCrop->getScaledValueLow();
 	float sh = hCrop->getScaledValueHigh() - sy;
-	
+
 	shadowTex.drawSubsection(0,0, ofGetWindowWidth(), ofGetWindowHeight(), sx, sy, sw, sh);
 
 	Trees::draw();
@@ -95,7 +95,7 @@ void testApp::drawVideo(){
 	depthTex.draw(0, 0, -0.1, dw, dh);
 	//cf.draw();
 	//cf.getPolyline(0).draw();
-	
+
 	ofTranslate(dw, 0, 0);
 	ofScale(f, f);
 
@@ -173,7 +173,7 @@ void testApp::setupGui()
 
 	gui1->setDrawBack(true);
 	gui1->setColorBack(ofColor::gray);
-	
+
 	ofAddListener(gui1->newGUIEvent,this,&testApp::guiEvent);
 }
 
@@ -211,7 +211,7 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 		ofxUISlider* slider = (ofxUISlider*) e.widget; 
 		openni::Status rc = colorStream.getStream()->getCameraSettings()->setGain(slider->getScaledValue());
 	}
-	
+
 	else if(name == "D_GRID")
 	{
 		ofxUIToggle *toggle = (ofxUIToggle *) e.widget; 
@@ -518,7 +518,7 @@ void testApp::drawScene(int iCameraDraw){
 	}
 
 	//drawShadow();
-	
+
 }
 
 //--------------------------------------------------------------
@@ -541,8 +541,8 @@ void testApp::keyPressed(int key){
 	case '2':
 	case '3':
 	case '4':
-			iMainCamera = key - '1';
-			break;
+		iMainCamera = key - '1';
+		break;
 
 	case 'f': ofToggleFullscreen(); setupViewports(toDrawSideViewports); break;
 	case 'g': gui1->toggleVisible(); break;
@@ -580,7 +580,7 @@ void testApp::keyPressed(int key){
 	}
 
 }
-	
+
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 	setupViewports(toDrawSideViewports);
@@ -591,13 +591,13 @@ void testApp::updateMats()
 {
 	ofPtr<ofPixels> colorPixels = colorStream.getPixels();
 	cv::Mat fullColorMat = ofxCv::toCv(*colorPixels);
-	
-//	cout << fullColorMat;
-//	int x, y, w, h;
-//	colorStream.getStream()->getCropping(&x, &y, &w, &h);
-//	colorMat = fullColorMat(cv::Range(y, y+h), cv::Range(x, x+w)).clone();
+
+	//	cout << fullColorMat;
+	//	int x, y, w, h;
+	//	colorStream.getStream()->getCropping(&x, &y, &w, &h);
+	//	colorMat = fullColorMat(cv::Range(y, y+h), cv::Range(x, x+w)).clone();
 	colorMat = fullColorMat;
-//	cv::imshow("colorMat", colorMat);
+	//	cv::imshow("colorMat", colorMat);
 
 	colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
 
@@ -611,7 +611,7 @@ void testApp::updateMats()
 
 void testApp::allocateTextures()
 {
-//	if (depthMat.empty()
+	//	if (depthMat.empty()
 	depthTex.allocate(depthMat.cols, depthMat.rows, GL_LUMINANCE);
 	colorTex.allocate(colorMat.cols, colorMat.rows, GL_LUMINANCE);
 	shadowTex.allocate(colorMat.cols, colorMat.rows, GL_LUMINANCE);
@@ -633,7 +633,7 @@ void testApp::update()
 
 
 	outputStrings.push_back(ofToString(ofGetFrameRate()));
-	
+
 	updateMats();
 	cvProcess();
 
@@ -695,7 +695,7 @@ void testApp::cvProcess()
 	}
 
 	//m8 = 255 - m8; //black shadow
-		
+
 
 
 	cv::Mat depthMaskHD;
@@ -713,7 +713,7 @@ void testApp::cvProcess()
 	GaussianBlur(c, c, cv::Size(3,3), 1);
 
 	int thresh = s->getScaledValue();
-//	cv::adaptiveThreshold(c, c, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 7, thresh);
+	//	cv::adaptiveThreshold(c, c, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 7, thresh);
 	c = c > thresh;
 
 	cv::medianBlur(c, c, 7);
@@ -721,9 +721,9 @@ void testApp::cvProcess()
 	c2.setTo(255);
 
 	c.copyTo(c2, depthMaskHdCropped);// fix Res
-	
+
 	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_LUMINANCE);
-	
+
 }
 
 void testApp::createBird( BirdData& p )
@@ -771,10 +771,10 @@ void testApp::updateUsers( UserDataArray& usersData )
 			{
 				nite::Point3f nitePos = head.getPosition();
 				ofPoint ofPos(nitePos.x, nitePos.y, nitePos.z);
-				
+
 				ofVec2f depthPt = depthStream.worldToCamera(ofPos);
 				ofVec2f grayPt = toGrayHD(depthPt);
-				
+
 				ofPoint ofPosTL(ofPos);
 				ofPosTL.x -= 100;
 				ofPosTL.y -= 100;
@@ -794,11 +794,11 @@ void testApp::updateUsers( UserDataArray& usersData )
 
 				//if (grayPtTL.x > 0 && grayPtTL.y > 0 && grayPtBR.x < 640 && grayPtBR.y < 1024)
 				//{
-					//cv::Mat rHandCrop = c(cv::Rect(grayPtTLCV, grayPtBRCV));
-					//imshow("rH", rHandCrop);
+				//cv::Mat rHandCrop = c(cv::Rect(grayPtTLCV, grayPtBRCV));
+				//imshow("rH", rHandCrop);
 				//}
-				
-				
+
+
 				cv::circle(c, cv::Point(grayPt.x, grayPt.y), 4, CV_RGB(0, 0, 0));
 				cv::circle(c, cv::Point(grayPt.x, grayPt.y), 3, CV_RGB(255, 255, 255));
 			}
@@ -832,88 +832,90 @@ cv::Scalar black(0,0,0);
 void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 {
 	nite::UserMap userMap = userTrackerFrame.getUserMap();
+
+	const nite::Array<nite::UserData>& userDataArray = userTrackerFrame.getUsers();
 	cv::Mat users(userMap.getHeight(), userMap.getWidth(), CV_16UC1, (void*)userMap.getPixels());
+	cv::Mat dst(users.size(), CV_8UC3); //debug drawing stuff
 
-	// TODO: split for different users
-	cv::Mat u8 = users > 0; 
-
-
-	cv::Mat dst(u8.size(), CV_8UC3);
-
-	//detect peaks
-	std::vector<std::vector<cv::Point> > contours;
-	std::vector<cv::Vec4i> hierarchy;
-
-	cv::findContours(u8.clone(), contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
-
-	//approximate with lines
-	for( size_t k = 0; k < contours.size(); k++ )
+	for (int userIndex = 0; userIndex < userDataArray.getSize(); userIndex++)
 	{
-		int epsilon = 7;//higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
-		approxPolyDP(cv::Mat(contours[k]), contours[k], epsilon, true); 
-	}
+		const nite::UserData& userData = userDataArray[userIndex];
 
+		cv::Mat u8 = users == userData.getId();
 
-	if( !contours.empty() && !hierarchy.empty() )
-	{
-		// iterate through all the top-level contours,
-		// draw each connected component with its own random color
-		for(int ci = 0; ci < hierarchy.size(); ci++)
+		//detect peaks
+		std::vector<std::vector<cv::Point> > contours;
+		std::vector<cv::Vec4i> hierarchy;
+
+		cv::findContours(u8.clone(), contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+
+		//approximate with lines
+		for( size_t k = 0; k < contours.size(); k++ )
 		{
-		
-			vector<cv::Point>& contour = contours[ci];
-			cv::drawContours( dst, contours, ci, white, 1, 8, hierarchy );
+			int epsilon = 7;//higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
+			approxPolyDP(cv::Mat(contours[k]), contours[k], epsilon, true); 
+		}
 
-			if(cv::contourArea(contour) < 100)
+		if( !contours.empty() && !hierarchy.empty() )
+		{
+			// iterate through all the top-level contours,
+			// draw each connected component with its own random color
+			for(int ci = 0; ci < hierarchy.size(); ci++)
 			{
-				continue;
-			}
-			
-			//fingerPoint.push_back(contours[idx][0]);
-			for (int i = 1; i < contours[ci].size();i++)
-			{
-				//check if peak
-				cv::Point2f vec1 = contour[i - 1] - contour[i];
-				cv::Point2f vec2 = contour[(i + 1) % contour.size()] - contour[i];
-				cv::Point2f vec3 = contour[(i + 2) % contour.size()] - contour[(i + 1) % contour.size()];
 
-				double vec1norm = cv::norm(vec1);
-				double vec2norm = cv::norm(vec2);
-				double vec3norm = cv::norm(vec3);
+				vector<cv::Point>& contour = contours[ci];
+				cv::drawContours( dst, contours, ci, white, 1, 8, hierarchy );
 
-				vec1.x /= vec1norm;
-				vec1.y /= vec1norm;
-				vec2.x /= vec2norm;
-				vec2.y /= vec2norm;
-				vec3.x /= vec3norm;
-				vec3.y /= vec3norm;
-
-
-				if ( vec1.dot(vec2) > 0.2)
+				if(cv::contourArea(contour) < 100)
 				{
-					double cr = vec1.cross(vec2);
-					
-					cv::circle(dst,  contour[i], 3, white, 1 );
-					cv::circle(dst,  contour[i], 2, cr > 0 ? red : blue, -1 );
+					continue;
 				}
 
-				 if (vec1.dot(vec3) > 0.2 && vec2norm < 30)
-				 {
-					 cv::circle(dst,  contour[i], 3, white, 1 );
-					 cv::circle(dst,  contour[i], 2 , green, -1 );
-					//stringstream ss; ss << vec2norm;
-					//cv::putText(dst, ss.str(), contour[i], CV_FONT_BLACK, 1, white );
+				//fingerPoint.push_back(contours[idx][0]);
+				for (int i = 1; i < contours[ci].size();i++)
+				{
+					//check if peak
+					cv::Point2f vec1 = contour[i - 1] - contour[i];
+					cv::Point2f vec2 = contour[(i + 1) % contour.size()] - contour[i];
+					cv::Point2f vec3 = contour[(i + 2) % contour.size()] - contour[(i + 1) % contour.size()];
+
+					double vec1norm = cv::norm(vec1);
+					double vec2norm = cv::norm(vec2);
+					double vec3norm = cv::norm(vec3);
+
+					vec1.x /= vec1norm;
+					vec1.y /= vec1norm;
+					vec2.x /= vec2norm;
+					vec2.y /= vec2norm;
+					vec3.x /= vec3norm;
+					vec3.y /= vec3norm;
+
+
+					if ( vec1.dot(vec2) > 0.2)
+					{
+						double cr = vec1.cross(vec2);
+
+						cv::circle(dst,  contour[i], 3, white, 1 );
+						cv::circle(dst,  contour[i], 2, cr > 0 ? red : blue, -1 );
+					}
+
+					if (vec1.dot(vec3) > 0.2 && vec2norm < 30)
+					{
+						cv::circle(dst,  contour[i], 3, white, 1 );
+						cv::circle(dst,  contour[i], 2 , green, -1 );
+						//stringstream ss; ss << vec2norm;
+						//cv::putText(dst, ss.str(), contour[i], CV_FONT_BLACK, 1, white );
+					}
 				}
 			}
 		}
-	}
 
 
-
+	}//userIndex
 	imshow("dst", dst);
-	imshow("U", u8);
-	
-	
+	//imshow("U", u8);
+
+
 	cv::waitKey(1);
 
 }
