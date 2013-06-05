@@ -841,6 +841,12 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 	{
 		const nite::UserData& userData = userDataArray[userIndex];
 
+		nite::Point3f niteCom = userData.getCenterOfMass();
+		ofPoint com(niteCom.x, niteCom.y, niteCom.z);
+		ofVec2f com2d = depthStream.worldToCamera(com);
+		cv::circle(dst, cv::Point(com2d.x, com2d.y), 5 , red, 2);
+		
+
 		cv::Mat u8 = users == userData.getId();
 
 		//detect peaks
@@ -852,7 +858,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		//approximate with lines
 		for( size_t k = 0; k < contours.size(); k++ )
 		{
-			int epsilon = 7;//higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
+			int epsilon = 12;//higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
 			approxPolyDP(cv::Mat(contours[k]), contours[k], epsilon, true); 
 		}
 
@@ -896,7 +902,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 					vec3.y /= vec3norm;
 
 
-					if ( vec1.dot(vec2) > 0.2)
+					if ( vec1.dot(vec2) > 0.1)
 					{
 						double cr = vec1.cross(vec2);
 						bool isPeak = cr > 0;
@@ -912,7 +918,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 
 					}
 
-					if (vec1.dot(vec3) > 0.2 && vec2norm < 30)
+					if (vec1.dot(vec3) > 0.1 && vec2norm < 50)
 					{
 						cv::circle(dst,  contour[i], 3, white, 1 );
 						cv::circle(dst,  contour[i], 2 , green, -1 );
@@ -926,13 +932,25 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 				} // i < contour.size
 
 
+				vector<int> goodValleys;
 				const int valleysMinSize = 2;
 				if (valleys.size() > valleysMinSize)
 				{
-					for (int i = 0; i < valleys.size() - valleysMinSize; i++)
+					for (int i = 1; i < valleys.size(); i++)
 					{
-						if (valleys[i + valleysMinSize] - valleys[i] < 7)
-							cv::circle(dst,  contour[valleys[i]], 5 , white, 2);
+						if (valleys[i] - valleys[i - 1] < 4 && cv::norm(contour[valleys[i]] - contour[valleys[i-1]]) < 30)
+						{
+							cv::Point midPt(0.5*(contour[valleys[i]] + contour[valleys[i-1]]));
+							cv::circle(dst,  midPt, 5 , white, 2);
+							
+							//cv::circle(dst, contour[valleys[i]], 5 , red, 2);
+							//cv::circle(dst, contour[valleys[i-1]], 5 , red, 2);
+
+							cv::line(dst, midPt, contour[valleys[i-1] + 1], red);
+//							cv::circle(dst, contour[valleys[i-1]], 5 , red, 2);
+
+
+						}
 					}
 
 				}
