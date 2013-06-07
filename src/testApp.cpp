@@ -66,7 +66,7 @@ void testApp::drawVideo2D(){
 	float sy = hCrop->getScaledValueLow();
 	float sh = hCrop->getScaledValueHigh() - sy;
 
-	shadowTex.drawSubsection(0,0, ofGetWindowWidth(), ofGetWindowHeight(), sx, sy, sw, sh);
+	shadowTex.drawSubsection(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024, sx, sy, sw, sh);
 
 	Trees::draw();
 
@@ -597,7 +597,7 @@ void testApp::updateMats()
 	//	colorStream.getStream()->getCropping(&x, &y, &w, &h);
 	//	colorMat = fullColorMat(cv::Range(y, y+h), cv::Range(x, x+w)).clone();
 	colorMat = fullColorMat;
-	//	cv::imshow("colorMat", colorMat);
+	cv::imshow("colorMat", colorMat);
 
 	colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
 
@@ -715,14 +715,18 @@ void testApp::cvProcess()
 	int thresh = s->getScaledValue();
 	//	cv::adaptiveThreshold(c, c, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 7, thresh);
 	c = c > thresh;
+	imshow("c",c);
 
 	cv::medianBlur(c, c, 7);
+	imshow("cMedianBlur",c);
+	
 	Mat c2(c.size(), c.type());
 	c2.setTo(255);
 
 	c.copyTo(c2, depthMaskHdCropped);// fix Res
 
-	shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_LUMINANCE);
+	//shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_LUMINANCE);
+	shadowTex.loadData(c.ptr(), c.cols, c.rows, GL_LUMINANCE);
 
 }
 
