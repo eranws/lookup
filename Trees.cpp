@@ -43,6 +43,5 @@ void Trees::draw()
 
 	int i = rw % images.size();
 
-	images[i].draw(0,0, ofGetWindowWidth(), ofGetWindowHeight());
-
+	images[i].draw(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024);
 }

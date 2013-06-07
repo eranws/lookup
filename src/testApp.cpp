@@ -42,7 +42,7 @@ void testApp::setup(){
 	allocateTextures();
 
 	setupGui();
-	//gui1->loadSettings("settings.xml");
+	gui1->loadSettings("settings.xml");
 
 	setupScene();
 
@@ -241,6 +241,8 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 	else if(name == "Save Settings")
 	{
 		gui1->saveSettings("settings.xml");
+		gui1->saveSettings("settings_"+ ofGetTimestampString() +".xml");
+
 	}
 
 
