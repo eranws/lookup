@@ -858,7 +858,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		//approximate with lines
 		for( size_t k = 0; k < contours.size(); k++ )
 		{
-			int epsilon = 12;//higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
+			double epsilon = ofMap(com.z, 500, 3000, 5, 10, true); //higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
 			approxPolyDP(cv::Mat(contours[k]), contours[k], epsilon, true); 
 		}
 
