@@ -854,7 +854,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		ofPoint com(niteCom.x, niteCom.y, niteCom.z);
 		ofVec2f com2d = depthStream.worldToCamera(com);
 		cv::circle(dst, cv::Point(com2d.x, com2d.y), 5 , red, 2);
-		
+
 
 		cv::Mat u8 = users == userData.getId();
 
@@ -867,7 +867,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		//approximate with lines
 		for( size_t k = 0; k < contours.size(); k++ )
 		{
-			double epsilon = ofMap(com.z, 500, 3000, 5, 10, true); //higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
+			double epsilon = ofMap(com.z, 500, 4000, 7, 2, true); //higher => smoother. TODO: choose as a function of CoM distance (closer=>smaller)
 			approxPolyDP(cv::Mat(contours[k]), contours[k], epsilon, true); 
 		}
 
@@ -911,55 +911,159 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 					vec3.y /= vec3norm;
 
 
-					if ( vec1.dot(vec2) > 0.1)
+					if (vec1norm < 50)
 					{
-						double cr = vec1.cross(vec2);
-						bool isPeak = cr > 0;
 
-						cv::circle(dst,  contour[i], 3, white, 1 );
-						cv::circle(dst,  contour[i], 2, isPeak ? red : blue, -1 );
+						if ( vec1.dot(vec2) > 0.1)
+						{
+							double cr = vec1.cross(vec2);
+							bool isPeak = cr > 0;
 
-						candidates.push_back(i);
-						if (isPeak)
+							//cv::circle(dst,  contour[i], 3, white, 1 );
+							//cv::circle(dst,  contour[i], 2, isPeak ? red : blue, -1 );
+
+							candidates.push_back(i);
+							if (isPeak)
+								peaks.push_back(i);
+							else
+								valleys.push_back(i);
+
+						}
+
+						if (vec1.dot(vec3) > 0.1 && vec2norm < 50)
+						{
+							//cv::circle(dst,  contour[i], 3, white, 1 );
+							//cv::circle(dst,  contour[i], 2 , green, -1 );
+							//stringstream ss; ss << vec2norm;
+							//cv::putText(dst, ss.str(), contour[i], CV_FONT_BLACK, 1, white );
+
+							candidates.push_back(i);
 							peaks.push_back(i);
-						else
-							valleys.push_back(i);
 
-					}
-
-					if (vec1.dot(vec3) > 0.1 && vec2norm < 50)
-					{
-						cv::circle(dst,  contour[i], 3, white, 1 );
-						cv::circle(dst,  contour[i], 2 , green, -1 );
-						//stringstream ss; ss << vec2norm;
-						//cv::putText(dst, ss.str(), contour[i], CV_FONT_BLACK, 1, white );
-
-						candidates.push_back(i);
-						peaks.push_back(i);
-						
+						}
 					}
 				} // i < contour.size
 
 
-				vector<int> goodValleys;
+				vector<cv::Point> goodValleys;
 				const int valleysMinSize = 2;
 				if (valleys.size() > valleysMinSize)
 				{
-					for (int i = 1; i < valleys.size(); i++)
+					for (int i = 0; i < valleys.size(); i++)
 					{
-						if (valleys[i] - valleys[i - 1] < 4 && cv::norm(contour[valleys[i]] - contour[valleys[i-1]]) < 30)
+						if (valleys[i] - valleys[i - 1] < 4)//! TODO: Real Norm... && cv::norm(contour[valleys[i]] - contour[valleys[i-1]]) < 30)
 						{
-							cv::Point midPt(0.5*(contour[valleys[i]] + contour[valleys[i-1]]));
-							cv::circle(dst,  midPt, 5 , white, 2);
-							
+							cv::Point& p = contour[valleys[i]];
+							goodValleys.push_back(p);
+							//cv::Point midPt(0.5*(contour[valleys[i]] + contour[valleys[i-1]]));
+							cv::circle(dst,  p, 2 , green, -1);
+							//cv::circle(dst,  midPt, 5 , white, 2);
 							//cv::circle(dst, contour[valleys[i]], 5 , red, 2);
 							//cv::circle(dst, contour[valleys[i-1]], 5 , red, 2);
 
-							cv::line(dst, midPt, contour[valleys[i-1] + 1], red);
-//							cv::circle(dst, contour[valleys[i-1]], 5 , red, 2);
+							//cv::line(dst, midPt, contour[valleys[i-1] + 1], red); // TODO: paste wing image on shadow
+						}
+					}
 
+					if (goodValleys.size() > 0)
+					{
+						vector<ofPoint> realGoodValleys;
+						//convert to real world
+						for (int i = 0; i < goodValleys.size(); i++)
+						{
+							cv::Point& pv = goodValleys[i];
+							realGoodValleys.push_back(depthStream.cameraToWorld(ofVec2f(pv.x, pv.y)));
+						}
+
+						vector<vector<float> > distances;
+						vector<int> distanceUnderThresholdRowCount;
+						vector<float> distanceUnderThresholdRowWeight;
+						const float distanceThreshold = 150.0; //cm
+						for (int i = 0; i < realGoodValleys.size(); i++)
+						{
+							distances.push_back(vector<float>());
+							distanceUnderThresholdRowCount.push_back(0);
+							distanceUnderThresholdRowWeight.push_back(0.0f);
+
+
+
+							for (int j = 0; j < realGoodValleys.size(); j++)
+							{
+								if (i==j)
+								{
+									continue;
+								}
+
+								float d = realGoodValleys[i].distance(realGoodValleys[j]);
+								if (d > 0 && d < distanceThreshold)
+								{
+									distanceUnderThresholdRowCount[i]++;
+									distanceUnderThresholdRowWeight[i] += d;
+
+									cv::line(dst, goodValleys[i], goodValleys[j], red, 3); // TODO: paste wing image on shadow
+									stringstream ss; ss << d;
+									cv::putText(dst, ss.str(), 0.5*(goodValleys[i]+goodValleys[j]), CV_FONT_HERSHEY_PLAIN, 1, white );
+
+
+								}
+
+								distances[i].push_back(d);
+							}
+						}
+
+						const int countThreshold = 1;
+						vector<int> qualifiedIndices; //those who have passed the count threshold
+						for (int i = 0; i < distanceUnderThresholdRowCount.size(); i++)
+						{
+							if (distanceUnderThresholdRowCount[i] > countThreshold)
+							{
+								qualifiedIndices.push_back(i);
+							}
+						}
+
+
+						vector<int> qualifiedIndexCount;
+						for (int i = 0; i < qualifiedIndices.size(); i++)
+						{
+							int ix = qualifiedIndices[i];
+							qualifiedIndexCount.push_back(0);
+							for (int j = 0; j < qualifiedIndices.size(); j++)
+							{
+								int jx = qualifiedIndices[j];
+
+								if (distances[ix][jx] < distanceThreshold)
+									qualifiedIndexCount[i]++;
+
+							}
+						}
+
+
+						if (qualifiedIndexCount.size() > 0)
+						{
+							int maxIdx = 0;
+							int maxCount = 0;
+							for (int i = 0; i < qualifiedIndexCount.size(); i++)
+							{
+								if (maxCount < qualifiedIndexCount[i])
+								{
+									maxCount = qualifiedIndexCount[i];
+									maxIdx = i;
+								}
+							}
+							//std::sort(qualifiedIndexCount.begin(), qualifiedIndexCount.end());
+							const int maxCountThreshold = 3;
+							cv::circle(dst, goodValleys[qualifiedIndices[maxIdx]], (maxCount > maxCountThreshold ? 20 : 10), (maxCount >  maxCountThreshold ? green : red), -1);
+
+							stringstream ss; ss << maxCount;
+							cv::putText(dst, ss.str(), goodValleys[qualifiedIndices[maxIdx]], CV_FONT_HERSHEY_PLAIN, 2, white );
 
 						}
+
+
+						//cv::circle(dst,  goodValleys[0], 25 , white, 2);
+						//cv::circle(dst,  goodValleys[goodValleys.size()-1], 25 , blue, 2);
+
+
 					}
 
 				}
@@ -969,8 +1073,8 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		} // if contours && hierarchy !empty
 	}//userIndex
 
-	
-	
+
+
 	imshow("dst", dst);
 	//imshow("U", u8);
 
