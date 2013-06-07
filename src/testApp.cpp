@@ -10,6 +10,8 @@ void testApp::setup(){
 	toDrawVideo = true;
 	toDrawScene = false;
 	toDrawSideViewports = false;
+	toggleMirror = false;
+
 	showHelpText = true;
 
 	ofSetVerticalSync(true);
@@ -68,7 +70,7 @@ void testApp::drawVideo2D(){
 
 	shadowTex.drawSubsection(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024, sx, sy, sw, sh);
 
-	Trees::draw();
+//	Trees::draw();
 
 	drawVideo();
 }
@@ -727,6 +729,7 @@ void testApp::cvProcess()
 
 	c.copyTo(c2, depthMaskHdCropped);// fix Res
 
+	c += 64;
 	//shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_LUMINANCE);
 	shadowTex.loadData(c.ptr(), c.cols, c.rows, GL_LUMINANCE);
 
