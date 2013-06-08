@@ -82,7 +82,6 @@ void UserAppData::updateHandCluster( ofVec2f p, int maxCount )
 		hcRunAvg -= hcValues.back();
 		hcValues.pop_back();
 
-		printf("hcRunAvg: %.2f %s\n", hcRunAvg, hcTrigger?"T":"F"); 
 		if (hcRunAvg > hcValuesHighThreshold * hcValuesMaxSize && hcTrigger)
 		{
 			hcTrigger = false;
@@ -90,7 +89,6 @@ void UserAppData::updateHandCluster( ofVec2f p, int maxCount )
 			status.position2dHD = p;
 			status.realWorld = false;
 			status.velocity = ofVec3f(ofRandom(-5, 5), ofRandom(-5, 5), ofRandom(-5, 5));
-			printf("\n FIRE!\n");
 		}
 		if (hcRunAvg < hcValuesLowThreshold * hcValuesMaxSize)
 		{

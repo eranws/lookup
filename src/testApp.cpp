@@ -1014,18 +1014,18 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 			{
 				p = appUserMap[id].status.position2dHD;
 			}
-
-			bd.position = getOrigin() + toGrayHD(p);
+			ofVec2f pHD = toGrayHD(p);
+			bd.position = getOrigin() + pHD;
 
 			
-			bd.velocity = bd.position - com2d;
+			bd.velocity = pHD - toGrayHD(com2d);
 			ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
 		}
 
 
 
 	}//userIndex
-
+ 
 
 
 	imshow("dst", dst);
