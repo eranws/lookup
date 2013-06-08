@@ -6,7 +6,7 @@ class Bird : public ofNode
 {
 public:
 	
-	Bird(ofVec3f velocity, const vector <ofImage>& vi);
+	Bird(ofVec3f velocity, vector <ofImage>& vi);
 	~Bird();
 
 	void setup();
@@ -24,7 +24,7 @@ public:
 
 	int rw;
 
-	const vector <ofImage>& _images;
+	vector <ofImage>& _images;
 	
 };
 

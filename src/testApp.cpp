@@ -564,7 +564,7 @@ void testApp::keyPressed(int key){
 	case 'b':
 		{
 			ofPoint p(320, 512);
-			ofVec3f v(0, 20, 0);
+			ofVec3f v(0, 0, 0);
 			swarm.addParticle(getOrigin() + p, v);
 			break;
 		}
@@ -877,7 +877,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 				const int valleysMinSize = 2;
 				if (valleys.size() > valleysMinSize)
 				{
-					for (int i = 0; i < valleys.size(); i++)
+					for (int i = 1; i < valleys.size(); i++)
 					{
 						if (valleys[i] - valleys[i - 1] < 4)//! TODO: Real Norm... && cv::norm(contour[valleys[i]] - contour[valleys[i-1]]) < 30)
 						{
@@ -917,11 +917,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 
 							for (int j = 0; j < realGoodValleys.size(); j++)
 							{
-								if (i==j)
-								{
-									continue;
-								}
-
+								
 								float d = realGoodValleys[i].distance(realGoodValleys[j]);
 								if (d > 0 && d < distanceThreshold)
 								{

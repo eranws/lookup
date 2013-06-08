@@ -19,7 +19,9 @@ void initAnimation(string s)
 			// add the image to the vector
 			string filePath = dir.getPath(i);
 			images.push_back(ofImage());
-			images.back().loadImage(filePath);
+
+			ofImage& image = images.back();
+			image.loadImage(filePath);
 		}
 
 		for(int i = 0; i < dir.numFiles(); i++) {

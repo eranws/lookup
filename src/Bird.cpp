@@ -2,7 +2,7 @@
 #include "ofImage.h"
 
 
-Bird::Bird(ofVec3f velocity, const vector <ofImage>& vi) :
+Bird::Bird(ofVec3f velocity, vector <ofImage>& vi) :
 	velocity(velocity), _images(vi)
 {
 
@@ -40,11 +40,11 @@ void Bird::customDraw()
 	//if ((animationCounter + particles[i]->glideFrameStart) % glidingFactor > 0) frameIndex = particles[i]->animationFrameStart;
 
 	// draw the image sequence at the new frame count
-	rw += (rand() % 4) ? 1 : 0; //random walk
+	rw ++;//= (rand() % 4) ? 1 : 0; //random walk
 	//int i = ofGetFrameNum();
 	
 	int i = rw % _images.size();
-	ofImage img = _images[i];
+	ofImage& img = _images[i];
 
 	img.draw(0,0);
 
