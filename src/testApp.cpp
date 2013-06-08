@@ -556,6 +556,18 @@ void testApp::keyPressed(int key){
 		swarm.addParticle(10);
 		break;
 
+	case 'b':
+		{
+			ofPoint origin(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 10);
+			ofPoint p(320, 512);
+			ofVec3f v(0, 20, 0);
+			swarm.addParticle(origin + p, v);
+			break;
+		}
+
+			
+
+
 	default:
 		break;
 	}
@@ -606,14 +618,13 @@ void testApp::update()
 	outputStrings.push_back("Press keys 1-4 to select a camera for main view");
 	outputStrings.push_back("Camera selected: " + ofToString(iMainCamera + 1));
 	outputStrings.push_back("Press 'f' to toggle fullscreen");
-	outputStrings.push_back("Press 'p' to toggle parents on OrthoCamera's");
 	outputStrings.push_back("[d]raw video:" + ofToString(toDrawVideo ? "On" : "Off"));
 	outputStrings.push_back("draw [s]cene:" + ofToString(toDrawScene ? "On" : "Off"));
 	outputStrings.push_back("side [v]iewports:" + ofToString(toDrawSideViewports ? "On" : "Off"));
+	outputStrings.push_back(ofToString(ofGetFrameRate()));
 	outputStrings.push_back(ofxProfile::describe());
 
 
-	outputStrings.push_back(ofToString(ofGetFrameRate()));
 
 	ofxProfileSectionPush("updateMats");
 	updateMats();

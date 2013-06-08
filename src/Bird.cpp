@@ -61,8 +61,8 @@ const float MAX_VELOCITY = 30.0f;
 	// Calculate time past per frame
 	float dt = ofGetLastFrameTime();
 	move(velocity * dt);
-	velocity += -SPRING_CONSTANT * getPosition() * dt;
-	velocity.limit(MAX_VELOCITY);
+//	velocity += -SPRING_CONSTANT * getPosition() * dt;
+//	velocity.limit(MAX_VELOCITY);
 }
 
 void Bird::setup()
