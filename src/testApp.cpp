@@ -1050,19 +1050,11 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 									maxIdx = i;
 								}
 							}
-							//std::sort(qualifiedIndexCount.begin(), qualifiedIndexCount.end());
+
 							const int maxCountThreshold = 3;
 							cv::circle(dst, goodValleys[qualifiedIndices[maxIdx]], (maxCount > maxCountThreshold ? 20 : 10), (maxCount >  maxCountThreshold ? green : red), -1);
 
-							stringstream ss; ss << maxCount;
-							cv::putText(dst, ss.str(), goodValleys[qualifiedIndices[maxIdx]], CV_FONT_HERSHEY_PLAIN, 2, white );
-
 						}
-
-
-						//cv::circle(dst,  goodValleys[0], 25 , white, 2);
-						//cv::circle(dst,  goodValleys[goodValleys.size()-1], 25 , blue, 2);
-
 
 					}
 
