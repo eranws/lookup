@@ -2,8 +2,9 @@
 
 string filenames[] = {
 	"blue_bird/PNG Sequence60",
-//	"mustard_bird/PNG Sequence",
-//	"yellow_bird/PNG Sequence"
+	"purple_bird/PNG Sequence60",
+	"mustard_bird/PNG Sequence60",
+	"yellow_bird/PNG Sequence60"
 };
 
 void initAnimation(string s)
