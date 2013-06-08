@@ -50,8 +50,7 @@ void testApp::setup(){
 
 	gui1->setVisible(false);
 
-	cf.setAutoThreshold(false);
-
+	
 	registerBirdEvents(this);
 
 }
@@ -95,8 +94,6 @@ void testApp::drawVideo(){
 	float f = 0.5;
 	int dw = depthTex.getWidth() * f, dh = depthTex.getHeight() * f;
 	depthTex.draw(0, 0, -0.1, dw, dh);
-	//cf.draw();
-	//cf.getPolyline(0).draw();
 
 	ofTranslate(dw, 0, 0);
 	ofScale(f, f);
@@ -637,48 +634,6 @@ void testApp::cvProcess()
 	m.setTo(0, invertDepthMask);
 	cv::Mat m8;	m.convertTo(m8, CV_8UC1, 0.25);
 
-	cf.findContours(m8);
-
-	for (int i = 0; i < cf.size(); i++)
-	{
-		double area = cf.getContourArea(i);
-		if (area < 1000) continue;
-		cv::Point2f C = cf.getCenter(i);
-
-		ofPolyline pln = cf.getPolyline(i);
-		ofPolyline plsm = pln.getSmoothed(10);
-		ofPolyline plc = pln.getResampledByCount(30);
-
-		vector<ofPoint> pts = plsm.getVertices();
-		for (int pi = 0; pi < pts.size(); pi++)
-		{
-			ofPoint p = pts[pi];
-			ofVec2f va(p.x - C.x, p.y - C.y);
-			float a = va.angle(ofVec2f());
-			float s = va.length();
-			//outputStrings.push_back(ofToString(a) + ofToString(s));
-		}
-
-
-		const ofPolyline& pl = plsm;
-		for (int j = 1; j < pl.size(); j++)
-		{
-			cv::line(m8, cv::Point2d(pl[j-1].x, pl[j-1].y), cv::Point2d(pl[j].x, pl[j].y), cvScalarAll(0), 1);
-			cv::line(m8, cv::Point2d(pl[j-1].x, pl[j-1].y), cv::Point2d(pl[j].x, pl[j].y), cvScalarAll(255), 1);
-		}
-
-
-		outputStrings.push_back("Bird #" + ofToString(i));
-		outputStrings.push_back(ofToString(area));
-		cv::line(m8, C, cf.getCentroid(i), cvScalarAll(0), 3);
-		cv::line(m8, C, cf.getCentroid(i), cvScalarAll(255), 2);
-
-	}
-
-	//m8 = 255 - m8; //black shadow
-
-
-
 	cv::Mat depthMaskHD;
 	cv::Mat depthMaskCrop = depthMask(cv::Range::all(), cv::Range(160, 480));
 
@@ -706,7 +661,7 @@ void testApp::cvProcess()
 
 	c.copyTo(c2, depthMaskHdCropped);// fix Res
 
-	c += 64;
+	c += 64; //25% gray
 	//shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_LUMINANCE);
 	shadowTex.loadData(c.ptr(), c.cols, c.rows, GL_LUMINANCE);
 

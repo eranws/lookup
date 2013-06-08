@@ -86,7 +86,6 @@ private:
 		bool toggleExposure;
 		bool toggleGain;
 
-		ofxCv::ContourFinder cf;
 		std::vector<string> outputStrings;
 
 		void drawShadow();
