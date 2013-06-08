@@ -4,6 +4,9 @@
 #include "Utilities.h"
 #include "..\BirdEvents.h"
 
+#define PROFILE 1
+#include "ofxProfile.h"
+
 //--------------------------------------------------------------
 void testApp::setup(){
 
@@ -607,13 +610,17 @@ void testApp::update()
 	outputStrings.push_back("[d]raw video:" + ofToString(toDrawVideo ? "On" : "Off"));
 	outputStrings.push_back("draw [s]cene:" + ofToString(toDrawScene ? "On" : "Off"));
 	outputStrings.push_back("side [v]iewports:" + ofToString(toDrawSideViewports ? "On" : "Off"));
-
+	outputStrings.push_back(ofxProfile::describe());
 
 
 	outputStrings.push_back(ofToString(ofGetFrameRate()));
 
+	ofxProfileSectionPush("updateMats");
 	updateMats();
+	ofxProfileSectionPop();
+	ofxProfileSectionPush("cvProcess");
 	cvProcess();
+	ofxProfileSectionPop();
 
 }
 
@@ -621,7 +628,12 @@ void testApp::cvProcess()
 {
 	using namespace cv;
 
+	ofxProfileSectionPush("clone");
 	Mat c = colorMat.clone();
+	ofxProfileSectionPop();
+	
+#if 0
+	ofxProfileSectionPush("depth ops");
 	Mat m = depthMat.clone();
 	//	resize(m, m, cv::Size(), 3, 3, CV_INTER_CUBIC);
 
@@ -643,27 +655,33 @@ void testApp::cvProcess()
 	int vOffset = 32; //HD adds 32 rows on top and bottom
 	depthMaskHD.copyTo(depthMaskHdCropped(cv::Range(0 + vOffset, 960 + vOffset), cv::Range::all()));
 	cv::morphologyEx(depthMaskHdCropped, depthMaskHdCropped, CV_MOP_DILATE, cv::getStructuringElement(CV_SHAPE_ELLIPSE, cv::Size(11, 11)));
+	ofxProfileSectionPop();
+#endif
 
 	ofxUISlider* s = (ofxUISlider*)gui1->getWidget("colorThreshold");
 
+
+	ofxProfileSectionPush("gauss blur");
 	GaussianBlur(c, c, cv::Size(3,3), 1);
+	ofxProfileSectionPop();
 
 	int thresh = s->getScaledValue();
 	//	cv::adaptiveThreshold(c, c, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 7, thresh);
 	c = c > thresh;
-	imshow("c",c);
 
-	cv::medianBlur(c, c, 7);
-	imshow("cMedianBlur",c);
-	
-	Mat c2(c.size(), c.type());
-	c2.setTo(255);
+	ofxProfileSectionPush("median blur");
+	cv::medianBlur(c, c, 3);
+	ofxProfileSectionPop();
 
-	c.copyTo(c2, depthMaskHdCropped);// fix Res
+
+	//c.copyTo(c2, depthMaskHdCropped);// fix Res
 
 	c += 64; //25% gray
 	//shadowTex.loadData(c2.ptr(), c2.cols, c2.rows, GL_LUMINANCE);
+
+	ofxProfileSectionPush("loadData");
 	shadowTex.loadData(c.ptr(), c.cols, c.rows, GL_LUMINANCE);
+	ofxProfileSectionPop();
 
 }
 
@@ -682,7 +700,6 @@ void testApp::exit()
 
 void testApp::updateUsers( UserDataArray& usersData )
 {
-	//return;
 	const nite::Array<nite::UserData>& users = usersData.data;
 
 	cv::Mat c = colorMat.clone();
