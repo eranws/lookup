@@ -277,7 +277,7 @@ void testApp::setupScene()
 
 	setupViewports(toDrawSideViewports);
 
-	Trees::init("C:/Users/eran.weissenstern/Dropbox/Infected_bird_2/treetop 2/PNG Sequence2_60 9X16");
+	Trees::init("/trees/");
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
 	swarm.init();

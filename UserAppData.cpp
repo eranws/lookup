@@ -59,8 +59,7 @@ void UserAppData::updateSkeleton( const nite::UserData& user )
 				status.valid = true;
 				status.position3d = p1.middle(p2);
 				status.realWorld = true;
-				status.velocity = ofVec3f(ofRandom(-5, 5), ofRandom(-5, 5), ofRandom(-5, 5));
-			}
+		}
 			if (dRunAvg > dValuesHighThreshold * dValuesSize)
 			{
 				dTrigger = true;
@@ -88,7 +87,6 @@ void UserAppData::updateHandCluster( ofVec2f p, int maxCount )
 			status.valid = true;
 			status.position2dHD = p;
 			status.realWorld = false;
-			status.velocity = ofVec3f(ofRandom(-5, 5), ofRandom(-5, 5), ofRandom(-5, 5));
 		}
 		if (hcRunAvg < hcValuesLowThreshold * hcValuesMaxSize)
 		{
