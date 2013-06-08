@@ -280,7 +280,7 @@ void testApp::setupScene()
 	Trees::init("C:/Users/eran.weissenstern/Dropbox/Infected_bird_2/treetop 2/PNG Sequence2_60 9X16");
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
-	nodeSwarm.init(100, 5);
+	nodeSwarm.init();
 	nodeSwarm.addParticle(1);
 }
 
@@ -328,16 +328,9 @@ void testApp::draw(){
 	}
 	glDisable(GL_DEPTH_TEST);
 	drawVideo2D();
+	drawScene(iMainCamera);
 	glEnable(GL_DEPTH_TEST);
 
-	// draw main viewport
-	cameras[iMainCamera]->begin(viewMain);
-	drawScene(iMainCamera);
-
-	// calculate mouse ray whilst this camera is active
-	updateMouseRay();
-
-	cameras[iMainCamera]->end();
 
 	//TODO: add widgets dynamically in one line
 	//#define addMat(x) cv::Mat& x = matMap[#x] = cv::Mat();
@@ -555,22 +548,6 @@ void testApp::keyPressed(int key){
 	case 'h': showHelpText = !showHelpText; break;
 	case 's': toDrawScene = !toDrawScene; break;
 
-	case 'p':
-		if(bCamParent){
-			camFront.clearParent();
-			camTop.clearParent();
-			camLeft.clearParent();
-
-			bCamParent = false;
-		}
-		else{
-			camFront.setParent(nodeSwarm.light);
-			camTop.setParent(nodeSwarm.light);
-			camLeft.setParent(nodeSwarm.light);
-
-			bCamParent = true;
-		}
-		break;
 
 	case 'a':
 		nodeSwarm.addParticle(1);

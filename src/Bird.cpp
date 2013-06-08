@@ -31,8 +31,6 @@ void Bird::customDraw()
 
 	ofPushStyle();
 	ofSetColor(color);
-
-
 	ofRotateZ(atan2f(velocity.y, velocity.x) * RAD_TO_DEG + 180);
 
 	//int frameIndex = ofGetFrameNum() - animationFrameStart; //fix animation not starting in 0;

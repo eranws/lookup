@@ -29,7 +29,7 @@ void initAnimation(string s)
 	}
 }
 
-void swarm::initImages()
+void Swarm::initImages()
 {
 	for (int i = 0; i < sizeof(filenames) / sizeof(string); i++)
 	{
@@ -38,18 +38,11 @@ void swarm::initImages()
 }
 
 
-// This 'swarm' object demonstrates a simple particle system
-//  with 'simple harmonic motion'
-
-swarm::swarm(){
-	light.setAmbientColor(ofColor(0, 0, 0));
-}
-
-void swarm::init(float positionDispersion, float velocityDispersion){
+void Swarm::init(){
 
 	// Check if we've already initialised
 	if(particles.size() == 0){
-		swarm::initImages();
+		Swarm::initImages();
 	}
 	else
 	{
@@ -57,11 +50,9 @@ void swarm::init(float positionDispersion, float velocityDispersion){
 		particles.clear();
 	}
 
-	_velocityDispersion = velocityDispersion;
-	_positionDispersion = positionDispersion;
 }
 
-void swarm::addParticle(ofPoint p, ofVec3f v)
+void Swarm::addParticle(ofPoint p, ofVec3f v)
 {
 	int idx = rand() % animations.size();
 	Bird* b = new Bird(v, animations[idx]);
@@ -71,43 +62,22 @@ void swarm::addParticle(ofPoint p, ofVec3f v)
 	particles.push_back(ofPtr<Bird>(b));
 }
 
-void swarm::addParticle(int nParticles)
+void Swarm::addParticle(int nParticles)
 {
 	for (int i = 0; i < nParticles; i++)
 	{
-		ofPoint p(ofRandom(-0.5f, 0.5f), ofRandom(-0.5f, 0.5f), ofRandom(2, 5));
-		p *= _positionDispersion;
-		ofVec3f v(ofRandom(-5, 5), ofRandom(-5, 5), ofRandom(-5, 5));
-		v *= _velocityDispersion;
+		ofPoint p(320, 512, 5);
+		ofVec3f v(1, 0, 0);
 
 		addParticle(p, v);
 	}
 }
 
-void swarm::customDraw(){
+void Swarm::customDraw(){
 
 	ofPushStyle();
-	light.enable();
-	light.setPosition(particles[0]->getGlobalPosition());
-
 	for(int i = 0; i < particles.size(); i++){
-		ofSetColor(particles[i]->color);
 		particles[i]->draw();
 	}
-
-	light.disable();
-	ofDisableLighting();
-
-	// Render light as white sphere
-	ofSetColor(255, 255, 255);
-	ofSphere(light.getPosition(), 2.0);
-	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL);
-	ofDrawBitmapString(" light", particles[0]->getGlobalPosition());
 	ofPopStyle();
-}
-
-
-int swarm::size()
-{
-	return particles.size();
 }
