@@ -32,7 +32,6 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 
 		void createBird(BirdData& p);
-		void updateUsers(UserDataArray& userDataArray);
 		void updateUserTracker(nite::UserTrackerFrameRef& userTrackerFrame);
 
 private:
@@ -116,7 +115,7 @@ private:
 		
 
 		typedef std::map<nite::UserId, UserAppData> UserMap;
-		UserMap userMap;
+		UserMap appUserMap;
 
 };
 

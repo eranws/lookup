@@ -7,7 +7,7 @@
 class UserAppData
 {
 public:
-	UserAppData() : dRunAvg(0.0f), dTrigger(false)
+	UserAppData() : dRunAvg(0.0f), dTrigger(false), hcRunAvg(0.0), hcTrigger(false)
 	{
 	}
 
@@ -19,12 +19,27 @@ public:
 	float dRunAvg;
 	bool dTrigger;
 
-	void update( const nite::UserData& user );
+	//hand cluster
+	static int hcValuesMaxSize;
+	static int hcValuesLowThreshold;
+	static int hcValuesHighThreshold;
+
+	std::deque<float> hcValues;
+	float hcRunAvg;
+	bool hcTrigger;
+
+
+	void updateSkeleton( const nite::UserData& user );
+	void updateHandCluster( ofVec2f p, int maxCount );
 	//std::vector<string> userOutputStrings;
 	struct Status
 	{
+		Status() : valid(false){}
+
 		bool valid;
-		ofPoint position; //realWorld
-		ofPoint velocity; //realWorld
+		bool realWorld;
+		ofPoint position3d;
+		ofVec2f position2dHD;
+		ofPoint velocity;
 	} status;
 };

@@ -529,6 +529,11 @@ void testApp::updateMouseRay(){
 	ray[1] = cameras[iMainCamera]->screenToWorld(ray[1], viewMain);
 }
 
+ofPoint getOrigin() 
+{
+	return ofPoint(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 5);
+}
+
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
@@ -558,10 +563,9 @@ void testApp::keyPressed(int key){
 
 	case 'b':
 		{
-			ofPoint origin(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 10);
 			ofPoint p(320, 512);
 			ofVec3f v(0, 20, 0);
-			swarm.addParticle(origin + p, v);
+			swarm.addParticle(getOrigin() + p, v);
 			break;
 		}
 
@@ -595,7 +599,6 @@ void testApp::updateMats()
 
 void testApp::allocateTextures()
 {
-	//	if (depthMat.empty()
 	depthTex.allocate(depthMat.cols, depthMat.rows, GL_LUMINANCE);
 	colorTex.allocate(colorMat.cols, colorMat.rows, GL_LUMINANCE);
 	shadowTex.allocate(colorMat.cols, colorMat.rows, GL_LUMINANCE);
@@ -689,8 +692,8 @@ void testApp::cvProcess()
 
 void testApp::createBird( BirdData& p )
 {
-	printf("TESTAPP: CREATE BIRD");
-	cout << p.position << " " << p.velocity << endl;
+//	printf("TESTAPP: CREATE BIRD \n");
+//	cout << p.position << " " << p.velocity << endl;
 	swarm.addParticle(p.position, p.velocity);
 }
 
@@ -700,31 +703,7 @@ void testApp::exit()
 	colorStream.exit();
 }
 
-void testApp::updateUsers( UserDataArray& usersData )
-{
-	const nite::Array<nite::UserData>& users = usersData.data;
-
-	cv::Mat c = colorMat.clone();
-	cv::Mat d = depthMat.clone();
-
-	for (int i = 0; i < users.getSize(); ++i)
-	{
-
-		const nite::UserData& user = users[i];
-		nite::UserId id = user.getId();
-
-		if (user.isVisible() && user.getSkeleton().getState() == nite::SKELETON_TRACKED)
-		{
-			userMap[id].update(user);
-			if (userMap[id].status.valid)
-			{
-				BirdData bd;
-				bd.position = userMap[id].status.position;
-				bd.velocity = userMap[id].status.velocity;
-
-				ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
-			}
-
+			/*
 			const nite::Skeleton& skeleton = user.getSkeleton();
 			const nite::SkeletonJoint& head = skeleton.getJoint(nite::JOINT_RIGHT_HAND);
 			if (head.getPositionConfidence() > .5)
@@ -750,29 +729,13 @@ void testApp::updateUsers( UserDataArray& usersData )
 
 				cv::Point grayPtTLCV(grayPtTL.x, grayPtTL.y);
 				cv::Point grayPtBRCV(grayPtBR.x, grayPtBR.y);
-				cv::rectangle(c, grayPtTLCV , grayPtBRCV , 3);
+				//cv::rectangle(c, grayPtTLCV , grayPtBRCV , 3);
 
-				//if (grayPtTL.x > 0 && grayPtTL.y > 0 && grayPtBR.x < 640 && grayPtBR.y < 1024)
-				//{
-				//cv::Mat rHandCrop = c(cv::Rect(grayPtTLCV, grayPtBRCV));
-				//imshow("rH", rHandCrop);
-				//}
-
-
-				cv::circle(c, cv::Point(grayPt.x, grayPt.y), 4, CV_RGB(0, 0, 0));
-				cv::circle(c, cv::Point(grayPt.x, grayPt.y), 3, CV_RGB(255, 255, 255));
+				//cv::circle(c, cv::Point(grayPt.x, grayPt.y), 4, CV_RGB(0, 0, 0));
+				//cv::circle(c, cv::Point(grayPt.x, grayPt.y), 3, CV_RGB(255, 255, 255));
 			}
 		}
-		else if (user.isLost())
-		{
-			userMap.erase(id);
-		}
-
-		cv::imshow("CPCPC", c);
-		cv::waitKey(1);
-
-	}
-}
+		*/
 
 ofVec2f toGrayHD( ofVec2f depthPt )
 {
@@ -792,7 +755,6 @@ cv::Scalar black(0,0,0);
 void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 {
 	nite::UserMap userMap = userTrackerFrame.getUserMap();
-
 	const nite::Array<nite::UserData>& userDataArray = userTrackerFrame.getUsers();
 	cv::Mat users(userMap.getHeight(), userMap.getWidth(), CV_16UC1, (void*)userMap.getPixels());
 	cv::Mat dst(users.size(), CV_8UC3); //debug drawing stuff
@@ -800,14 +762,29 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 	for (int userIndex = 0; userIndex < userDataArray.getSize(); userIndex++)
 	{
 		const nite::UserData& userData = userDataArray[userIndex];
+		nite::UserId id = userData.getId();
+
+		if (userData.isLost())
+		{
+			appUserMap.erase(id);
+		}
+		if (!userData.isVisible())
+		{
+			continue;
+		}
 
 		nite::Point3f niteCom = userData.getCenterOfMass();
 		ofPoint com(niteCom.x, niteCom.y, niteCom.z);
 		ofVec2f com2d = depthStream.worldToCamera(com);
 		cv::circle(dst, cv::Point(com2d.x, com2d.y), 5 , red, 2);
+		
+		if (userData.getSkeleton().getState() == nite::SKELETON_TRACKED)
+		{
+			appUserMap[id].updateSkeleton(userData);
+		}
 
-
-		cv::Mat u8 = users == userData.getId();
+		//# Contour processing
+		cv::Mat u8 = (users == id);
 
 		//detect peaks
 		std::vector<std::vector<cv::Point> > contours;
@@ -1002,11 +979,18 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 								}
 							}
 
+							cv::Point& p = goodValleys[qualifiedIndices[maxIdx]];
+							ofVec2f ofPt(p.x, p.y);
+							appUserMap[id].updateHandCluster(ofPt, maxCount);
+
 							const int maxCountThreshold = 3;
 							cv::circle(dst, goodValleys[qualifiedIndices[maxIdx]], (maxCount > maxCountThreshold ? 20 : 10), (maxCount >  maxCountThreshold ? green : red), -1);
 
 						}
-
+						else
+						{
+							appUserMap[id].updateHandCluster(ofVec2f(), 0);
+						}
 					}
 
 				}
@@ -1014,6 +998,32 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 
 			} // ci < hierarchy.size()
 		} // if contours && hierarchy !empty
+
+		if (appUserMap[id].status.valid)
+		{
+			appUserMap[id].status.valid = false;
+			//! TODO: set timeout
+
+			BirdData bd;
+			ofVec2f p;
+			if (appUserMap[id].status.realWorld)
+			{
+				p = depthStream.worldToCamera(appUserMap[id].status.position3d);
+			}
+			else
+			{
+				p = appUserMap[id].status.position2dHD;
+			}
+
+			bd.position = getOrigin() + toGrayHD(p);
+
+			
+			bd.velocity = bd.position - com2d;
+			ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
+		}
+
+
+
 	}//userIndex
 
 

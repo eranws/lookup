@@ -182,14 +182,8 @@ void ofxDepthStream::updateNite()
 		printf("Get next frame failed\n");
 		return;
 	}
-	
-	nite::UserTrackerFrameRef t = userTrackerFrame;
-	ofNotifyEvent(getBirdEvents().updateUserTracker, t);
-
-	
 
 	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
-	
 	for (int i = 0; i < users.getSize(); ++i)
 	{
 		const nite::UserData& user = users[i];
@@ -200,10 +194,7 @@ void ofxDepthStream::updateNite()
 		}
 	}
 
-	
-	UserDataArray uda(users);
-
-	ofNotifyEvent(getBirdEvents().updateUsers, uda); //TODO send id
-
+	nite::UserTrackerFrameRef t = userTrackerFrame;
+	ofNotifyEvent(getBirdEvents().updateUserTracker, t);
 }
 

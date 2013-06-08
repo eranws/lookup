@@ -1,14 +1,15 @@
 #include "UserAppData.h"
 
-int UserAppData::dValuesSize = 30;
+int UserAppData::dValuesSize = 20;
 int UserAppData::dValuesLowThreshold = 140;
 int UserAppData::dValuesHighThreshold = 300;
 
+int UserAppData::hcValuesMaxSize = 15;
+int UserAppData::hcValuesHighThreshold = 2;
+int UserAppData::hcValuesLowThreshold = 1;
 
-void UserAppData::update( const nite::UserData& user )
+void UserAppData::updateSkeleton( const nite::UserData& user )
 {
-	status.valid = false;
-
 	const nite::Skeleton& skeleton = user.getSkeleton();
 	const nite::SkeletonJoint& head = skeleton.getJoint(nite::JOINT_HEAD);
 	const nite::SkeletonJoint& leftHand = skeleton.getJoint(nite::JOINT_LEFT_HAND);
@@ -55,12 +56,10 @@ void UserAppData::update( const nite::UserData& user )
 			if (dRunAvg < dValuesLowThreshold * dValuesSize && dTrigger)
 			{
 				dTrigger = false;
-				printf("fire!");
 				status.valid = true;
-				status.position = p1.middle(p2);
+				status.position3d = p1.middle(p2);
+				status.realWorld = true;
 				status.velocity = ofVec3f(ofRandom(-5, 5), ofRandom(-5, 5), ofRandom(-5, 5));
-
-
 			}
 			if (dRunAvg > dValuesHighThreshold * dValuesSize)
 			{
@@ -72,4 +71,30 @@ void UserAppData::update( const nite::UserData& user )
 
 	//printf("\n"); 
 
+}
+
+void UserAppData::updateHandCluster( ofVec2f p, int maxCount ) 
+{
+	hcRunAvg += maxCount;
+	hcValues.push_front(maxCount);
+	if (hcValues.size() > hcValuesMaxSize)
+	{
+		hcRunAvg -= hcValues.back();
+		hcValues.pop_back();
+
+		printf("hcRunAvg: %.2f %s\n", hcRunAvg, hcTrigger?"T":"F"); 
+		if (hcRunAvg > hcValuesHighThreshold * hcValuesMaxSize && hcTrigger)
+		{
+			hcTrigger = false;
+			status.valid = true;
+			status.position2dHD = p;
+			status.realWorld = false;
+			status.velocity = ofVec3f(ofRandom(-5, 5), ofRandom(-5, 5), ofRandom(-5, 5));
+			printf("\n FIRE!\n");
+		}
+		if (hcRunAvg < hcValuesLowThreshold * hcValuesMaxSize)
+		{
+			hcTrigger = true;
+		}
+	}	
 }

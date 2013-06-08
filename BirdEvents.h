@@ -18,7 +18,6 @@ struct BirdData
 class BirdEvents{
 public:
 	ofEvent<BirdData> createBird;
-	ofEvent<UserDataArray> updateUsers;
 	ofEvent<nite::UserTrackerFrameRef> updateUserTracker;
 
 };
@@ -30,6 +29,5 @@ BirdEvents& getBirdEvents();
 template<class ListenerClass>
 void registerBirdEvents(ListenerClass * listener){
 	ofAddListener(getBirdEvents().createBird, listener, &ListenerClass::createBird);
-	ofAddListener(getBirdEvents().updateUsers, listener, &ListenerClass::updateUsers);
 	ofAddListener(getBirdEvents().updateUserTracker, listener, &ListenerClass::updateUserTracker);
 }
