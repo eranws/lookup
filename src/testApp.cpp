@@ -583,23 +583,14 @@ void testApp::windowResized(int w, int h){
 void testApp::updateMats()
 {
 	ofPtr<ofPixels> colorPixels = colorStream.getPixels();
-	cv::Mat fullColorMat = ofxCv::toCv(*colorPixels);
-
-	//	cout << fullColorMat;
-	//	int x, y, w, h;
-	//	colorStream.getStream()->getCropping(&x, &y, &w, &h);
-	//	colorMat = fullColorMat(cv::Range(y, y+h), cv::Range(x, x+w)).clone();
-	colorMat = fullColorMat;
-	cv::imshow("colorMat", colorMat);
-
+	colorMat = ofxCv::toCv(*colorPixels);
 	colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
 
 	ofPtr<ofShortPixels> depthPixels = depthStream.getPixels();
 	depthMat = ofxCv::toCv(*depthPixels);
-	cv::Mat m8;	depthMat.convertTo(m8, CV_8UC1, 0.25);
+	cv::Mat m8;	depthMat.convertTo(m8, CV_8UC1, 0.0625);
 
 	depthTex.loadData(m8.ptr(), m8.cols, m8.rows, GL_LUMINANCE);
-
 }
 
 void testApp::allocateTextures()
