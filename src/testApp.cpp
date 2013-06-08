@@ -256,7 +256,7 @@ void testApp::setupScene()
 	bCamParent = false;
 
 	// user camera
-	camEasyCam.setTarget(nodeSwarm);
+	camEasyCam.setTarget(swarm);
 	camEasyCam.setDistance(1000);
 	cameras[0] = &camEasyCam;
 
@@ -280,8 +280,8 @@ void testApp::setupScene()
 	Trees::init("C:/Users/eran.weissenstern/Dropbox/Infected_bird_2/treetop 2/PNG Sequence2_60 9X16");
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
-	nodeSwarm.init();
-	nodeSwarm.addParticle(1);
+	swarm.init();
+	swarm.addParticle(1);
 }
 
 void testApp::setupViewports(bool sideViews){
@@ -353,7 +353,7 @@ void testApp::draw(){
 	glDepthFunc(GL_ALWAYS); // draw on top of everything
 
 	// draw some labels
-	outputStrings.push_back(ofToString(nodeSwarm.size()));
+	outputStrings.push_back(ofToString(swarm.size()));
 
 
 	if(showHelpText)
@@ -395,7 +395,7 @@ void testApp::drawScene(int iCameraDraw){
 	if (!toDrawScene)
 		return;
 
-	nodeSwarm.draw();
+	swarm.draw();
 	if (toDrawGrid)
 	{
 		nodeGrid.draw();
@@ -550,10 +550,10 @@ void testApp::keyPressed(int key){
 
 
 	case 'a':
-		nodeSwarm.addParticle(1);
+		swarm.addParticle(1);
 		break;
 	case 'A':	
-		nodeSwarm.addParticle(10);
+		swarm.addParticle(10);
 		break;
 
 	default:
@@ -716,7 +716,7 @@ void testApp::createBird( BirdData& p )
 {
 	printf("TESTAPP: CREATE BIRD");
 	cout << p.position << " " << p.velocity << endl;
-	nodeSwarm.addParticle(p.position, p.velocity);
+	swarm.addParticle(p.position, p.velocity);
 }
 
 void testApp::exit()

@@ -70,7 +70,7 @@ private:
 		ofRectangle viewGrid[N_CAMERAS];
 
 		//my custom node
-		Swarm nodeSwarm;
+		Swarm swarm;
 		grid nodeGrid;
 
 		//ray drawn under mouse cursor [start,end]
