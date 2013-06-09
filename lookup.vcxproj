@@ -112,6 +112,7 @@
   <ItemGroup>
     <ClCompile Include="BirdEvents.cpp" />
     <ClCompile Include="BirdPart.cpp" />
+    <ClCompile Include="Sound3d.cpp" />
     <ClCompile Include="src\Bird.cpp" />
     <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -155,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="BirdEvents.h" />
     <ClInclude Include="BirdPart.h" />
+    <ClInclude Include="Sound3d.h" />
     <ClInclude Include="src\Bird.h" />
     <ClInclude Include="src\Grid.h" />
     <ClInclude Include="src\ofxColorStream.h" />

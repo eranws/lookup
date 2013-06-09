@@ -1,6 +1,6 @@
 #include "Swarm.h"
 
-string filenames[] = {
+string animationDirNames[] = {
 	"blue_bird/PNG Sequence60",
 	"purple_bird/PNG Sequence60",
 	"mustard_bird/PNG Sequence60",
@@ -34,9 +34,34 @@ void initAnimation(string s)
 
 void Swarm::initImages()
 {
-	for (int i = 0; i < sizeof(filenames) / sizeof(string); i++)
+	for (int i = 0; i < sizeof(animationDirNames) / sizeof(string); i++)
 	{
-		initAnimation(filenames[i]);
+		initAnimation(animationDirNames[i]);
+	}
+}
+
+
+void Swarm::initSounds()
+{
+	ofDirectory dir;
+	
+	int nFiles = dir.listDir("/sound");
+	if(nFiles) {
+		
+		for(int i=0; i<dir.numFiles(); i++)
+		{ 
+			Sound3D player;
+
+			// add the image to the vector
+			string filePath = dir.getPath(i);
+
+			player.loadSound(filePath);
+			player.setVolume(0.75);
+			player.setMultiPlay(true);
+			player.play();  
+
+			sounds.push_back(player);
+		}
 	}
 }
 
@@ -46,6 +71,7 @@ void Swarm::init(){
 	// Check if we've already initialised
 	if(particles.size() == 0){
 		Swarm::initImages();
+		Swarm::initSounds();
 	}
 	else
 	{

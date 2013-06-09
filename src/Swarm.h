@@ -3,8 +3,11 @@
 #include "ofFileUtils.h"
 #include "Bird.h"
 
+#include "..\Sound3d.h"
+
 typedef vector<ofImage> Animation;
 static vector<Animation> animations; 
+static vector<const Sound3D> sounds;
 
 class Swarm : public ofNode {
 
@@ -17,6 +20,7 @@ public:
 	void customDraw();
 
 	static void initImages();
+	static void initSounds();
 
 
 protected:

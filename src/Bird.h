@@ -2,6 +2,8 @@
 #include "ofMain.h"
 #include "ofImage.h"
 
+#include "..\Sound3d.h"
+
 class Bird : public ofNode
 {
 public:
