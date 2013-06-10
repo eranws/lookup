@@ -796,26 +796,42 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		d.copyTo(userMask, u8);
 		imshow("userMask", userMask);
 
-		appUser.maskHist.push_back(userMask);
-		if (appUser.maskHist.size() > 2)
+
+		if (userTrackerFrame.getFrameIndex() % 3)
 		{
+			appUser.maskHist.push_back(userMask);
+		}
 
-			cv::Mat mask1 = appUser.maskHist[0] >0 & appUser.maskHist[1]>0;
-			cv::Mat mask2 = appUser.maskHist[1] >0 & appUser.maskHist[2]>0;
-			cv::Mat mask3 = mask1 & mask2;
+		if (appUser.maskHist.size() > 4)
+		{
+			cv::Mat mask = appUser.maskHist[0] > 0;
 
-			cv::Mat k0 = appUser.maskHist[1] - appUser.maskHist[0];//
-			cv::Mat k1 = appUser.maskHist[2] - appUser.maskHist[1];//
+			for (int i = 1; i < appUser.maskHist.size(); i++)
+			{
+				mask &= appUser.maskHist[i] > 0;
+//				k += (appUser.maskHist[i] * ((i%2) ? 1 : -1));
+			}
 
-			cv::Mat k = k0;
+			static int w[]={1, -4, 6, -4, 1};
 
+			cv::Mat 
+				k = appUser.maskHist[0] * w[0];
+			for (int i = 1; i < appUser.maskHist.size(); i++)
+			{
+				k += appUser.maskHist[i] * w[i];
+			}
+
+
+			cv::bitwise_not(k, k, mask);
 			imshow("k", k);
+
+
 
 			cv::Mat k8;	k.convertTo(k8, CV_8UC1);
 			imshow("k8", k8);
 
 			cv::Mat k8mask;
-			k8.copyTo(k8mask, mask1);
+			k8.copyTo(k8mask, mask);
 			imshow("k8mask", k8mask);
 
 			cv::Mat k8eq;
