@@ -4,24 +4,26 @@
 #include "Utilities.h"
 #include "..\BirdEvents.h"
 
-#define PROFILE 1
+//#define PROFILE
 #include "ofxProfile.h"
 #include "..\Sound3d.h"
-#include "fmod.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
 
-	toDrawVideo = true;
+	toDrawVideo = false;
 	toDrawScene = false;
 	toDrawSideViewports = false;
 	toggleMirror = false;
 
-	showHelpText = true;
+	showHelpText = false;
 
 	ofSetVerticalSync(true);
 	ofSetWindowTitle("LookUp!");
 	ofSetFrameRate(60);
+	ofSetFullscreen(true);
+	ofHideCursor();
+
 	ofBackground(70, 70, 70);
 	ofEnableSmoothing();
 	glEnable(GL_DEPTH_TEST);
@@ -284,7 +286,6 @@ void testApp::setupScene()
 
 	// swarm is a custom ofNode in this example (see Swarm.h / Swarm.cpp)
 	swarm.init();
-	swarm.addParticle(1);
 }
 
 void testApp::setupViewports(bool sideViews){
