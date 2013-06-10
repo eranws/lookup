@@ -788,15 +788,17 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		//# Contour processing
 		cv::Mat u8 = (users == id);
 
-		cv::Mat d;
-	userTrackerFrame.getDepthFrame().getData();
-	//colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
-
+		openni::VideoFrameRef depthFrame = userTrackerFrame.getDepthFrame();
+		cv::Mat d(depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, (void*)depthFrame.getData());
 
 		cv::Mat userMask;
-		depthMat.copyTo(userMask, u8);
+		d.copyTo(userMask, u8);
 		imshow("userMask", userMask);
-//appUserMap[id]
+
+		cv::Mat userMask2;
+		depthMat.copyTo(userMask2, u8);
+		imshow("userMask2", userMask2);
+	//appUserMap[id]
 
 
 		//detect peaks
