@@ -39,8 +39,10 @@ void Sound3D::initializeFmod(){
         FMOD_System_GetMasterChannelGroup(sys, &channelgroup);
         bFmod3DInitialized = true;
     }
-	
+
 }
+
+
 
 bool Sound3D::loadSound(string fileName, bool stream)
 {
@@ -108,4 +110,10 @@ void Sound3D::updateSound( ofVec3f position, ofVec3f velocity )
 void Sound3D::update()
 {
 	FMOD_System_Update(sys);
+}
+
+void Sound3D::closeFmod()
+{
+	FMOD_System_Close(sys);
+	FMOD_System_Release(sys);
 }

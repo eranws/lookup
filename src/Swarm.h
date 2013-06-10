@@ -7,7 +7,6 @@
 
 typedef vector<ofImage> Animation;
 static vector<Animation> animations; 
-static vector<const Sound3D> sounds;
 
 class Swarm : public ofNode {
 
@@ -26,4 +25,5 @@ public:
 protected:
 	
 	vector<ofPtr<Bird> > particles;
+
 };

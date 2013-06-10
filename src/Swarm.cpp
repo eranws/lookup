@@ -1,5 +1,8 @@
 #include "Swarm.h"
 
+vector<Sound3D> sounds;
+Sound3D gplayer;
+
 string animationDirNames[] = {
 	"blue_bird/PNG Sequence60",
 	"purple_bird/PNG Sequence60",
@@ -44,43 +47,26 @@ void Swarm::initImages()
 void Swarm::initSounds()
 {
 
-	ofVec3f lposition, lvelocity, lforward, lup;
-	ofVec3f sposition, svelocity;
-
-	lvelocity.set(1, 1, 1);
-	lup.set(0, 1, 0);
-	lforward.set(0, 0, 1);
-	lposition.set(0, 0, 0);
-
-	sposition.set(3, 3, 2);
-	svelocity.set(1, 1, 1);
-
-	
-
+	gplayer.loadSound(ofToDataPath("sound/CAN.WAV"));
+	gplayer.setVolume(0.75);
+	gplayer.setMultiPlay(true);
+	gplayer.play();  
 
 	ofDirectory dir;
-	
 	int nFiles = dir.listDir("/sound");
 	if(nFiles) {
 		
 		for(int i=0; i<dir.numFiles(); i++)
 		{ 
-			Sound3D player;
-
+			sounds.push_back(Sound3D());
+			Sound3D& player = sounds.back();
 			// add the image to the vector
 			string filePath = dir.getPath(i);
 
 			player.loadSound(filePath);
 			player.setVolume(0.75);
 			player.setMultiPlay(true);
-
-			player.updateListener(lposition, lvelocity, lforward, lup);
-			player.updateSound(sposition, svelocity);
-			player.update();
-
-			player.play();  
-
-			sounds.push_back(player);
+//			player.play();
 		}
 	}
 }
