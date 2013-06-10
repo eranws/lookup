@@ -550,6 +550,8 @@ void testApp::keyPressed(int key){
 		iMainCamera = key - '1';
 		break;
 
+	case 'c': ofShowCursor(); break;
+	case 'C': ofHideCursor(); break;
 	case 'f': ofToggleFullscreen(); setupViewports(toDrawSideViewports); break;
 	case 'g': gui1->toggleVisible(); break;
 	case 'd': toDrawVideo = !toDrawVideo; break; //TODO: update gui

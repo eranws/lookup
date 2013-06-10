@@ -13,7 +13,7 @@ Bird::Bird(BirdData& bd, vector <ofImage>& vi) :
 		color.a = 255.0f;
 
 		animationFrameStart = 11;
-		birth = rand();
+		birth = ofGetSystemTime();
 		glideFrameStart = rand();
 }
 
@@ -46,7 +46,34 @@ void Bird::customDraw()
 	ofImage& img = _images[i];
 	
 	ofPushMatrix();
-	ofScale(size, size);
+
+	float scl = size;
+
+	float age = ofGetSystemTime() - birth;
+
+
+	float animStart = 0;
+	float animMiddle = 500;
+	float animEnd = 700;
+
+	if (age < animEnd)
+	{
+		float f;
+
+		if (age < animMiddle)
+		{
+			f = ofMap(age, animStart, animMiddle, 0, 1.2);
+		}
+		else
+		{
+			f = ofMap(age, animMiddle, animEnd, 1.2, 1);
+		}
+
+		scl *= f;
+	}
+
+
+	ofScale(scl, scl);
 	img.draw(0,0);
 	ofPopMatrix();
 
