@@ -2,9 +2,10 @@
 #include "ofImage.h"
 
 
-Bird::Bird(ofVec3f velocity, vector <ofImage>& vi) :
-	velocity(velocity), _images(vi)
+Bird::Bird(BirdData& bd, vector <ofImage>& vi) :
+	size(bd.size), velocity(bd.velocity), _images(vi)
 {
+		setPosition(bd.position);
 
 		color.r = ofRandom(255.0f);
 		color.g = ofRandom(255.0f);
@@ -25,10 +26,8 @@ const int BodyOffsetX = -138/2 - 30;
 void Bird::customDraw()
 {
 	update();
-	ofSetColor(255);
-	ofSphere(5.0);
-	ofDrawArrow(ofVec3f(), ofVec3f(1, 0, 0) * 10, 1);
 
+	ofSetColor(255);
 	ofPushStyle();
 	ofSetColor(color);
 	ofRotateZ(atan2f(velocity.y, velocity.x) * RAD_TO_DEG + 180);
@@ -45,8 +44,11 @@ void Bird::customDraw()
 	
 	int i = rw % _images.size();
 	ofImage& img = _images[i];
-
+	
+	ofPushMatrix();
+	ofScale(size, size);
 	img.draw(0,0);
+	ofPopMatrix();
 
 	ofPopStyle();
 
@@ -61,8 +63,8 @@ const float MAX_VELOCITY = 30.0f;
 	// Calculate time past per frame
 	float dt = ofGetLastFrameTime();
 	move(velocity * dt);
-//	velocity += -SPRING_CONSTANT * getPosition() * dt;
-//	velocity.limit(MAX_VELOCITY);
+	velocity += -SPRING_CONSTANT * (getPosition() - ofPoint(320, 512, 5)) * dt;
+	velocity.limit(MAX_VELOCITY);
 }
 
 void Bird::setup()

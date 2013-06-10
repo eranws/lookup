@@ -1,4 +1,5 @@
 #include "Swarm.h"
+#include "..\BirdEvents.h"
 
 vector<Sound3D> sounds;
 Sound3D gplayer;
@@ -94,11 +95,10 @@ void Swarm::init(){
 
 }
 
-void Swarm::addParticle(ofPoint p, ofVec3f v)
+void Swarm::addParticle(BirdData& bd)
 {
 	int idx = rand() % animations.size();
-	Bird* b = new Bird(v, animations[idx]);
-	b->setPosition(ofVec3f(p));
+	Bird* b = new Bird(bd, animations[idx]);
 
 	b->setup();
 	particles.push_back(ofPtr<Bird>(b));
@@ -108,10 +108,11 @@ void Swarm::addParticle(int nParticles)
 {
 	for (int i = 0; i < nParticles; i++)
 	{
-		ofPoint p(320, 512, 5);
-		ofVec3f v(1, 0, 0);
-
-		addParticle(p, v);
+		BirdData bd;
+		bd.position = ofPoint(320, 512, 5);
+		bd.velocity = ofVec3f(1, 0, 0);
+		bd.size = 0.5;
+		addParticle(bd);
 	}
 }
 

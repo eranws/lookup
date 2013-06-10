@@ -13,6 +13,7 @@ struct BirdData
 {
 	ofPoint position;
 	ofVec3f velocity;
+	float size;
 };
 
 class BirdEvents{

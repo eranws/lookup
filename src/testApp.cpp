@@ -564,15 +564,6 @@ void testApp::keyPressed(int key){
 	case 'A':	
 		swarm.addParticle(10);
 		break;
-
-	case 'b':
-		{
-			ofPoint p(320, 512);
-			ofVec3f v(0, 0, 0);
-			swarm.addParticle(getOrigin() + p, v);
-			break;
-		}
-
 			
 
 
@@ -698,7 +689,7 @@ void testApp::createBird( BirdData& p )
 {
 //	printf("TESTAPP: CREATE BIRD \n");
 //	cout << p.position << " " << p.velocity << endl;
-	swarm.addParticle(p.position, p.velocity);
+	swarm.addParticle(p);
 }
 
 void testApp::exit()
@@ -1021,6 +1012,8 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 			ofVec2f pHD = toGrayHD(p);
 			bd.position = getOrigin() + pHD;
 
+			float sz = ofMap(com.z, 500, 2000, 0.99, 0.6, true);
+			bd.size = sz * sz;
 			
 			bd.velocity = pHD - toGrayHD(com2d);
 			ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id

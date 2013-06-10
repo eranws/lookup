@@ -3,12 +3,13 @@
 #include "ofImage.h"
 
 #include "..\Sound3d.h"
+#include "..\BirdEvents.h"
 
 class Bird : public ofNode
 {
 public:
 	
-	Bird(ofVec3f velocity, vector <ofImage>& vi);
+	Bird(BirdData& bd, vector <ofImage>& vi);
 	~Bird();
 
 	void setup();
@@ -27,6 +28,6 @@ public:
 	int rw;
 
 	vector <ofImage>& _images;
-	
+	float size;
 };
 
