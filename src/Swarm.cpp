@@ -7,7 +7,6 @@ Sound3D gplayer;
 
 string soundNames[] = {
 	"sound/7898__schluppipuppie__bird006.wav",
-	"sound/9325__tigersound__bird-tweet-2.wav",
 	"sound/9327__tigersound__bird-tweet-4.wav",
 	"sound/9328__tigersound__bird-tweet",
 	"sound/bird1.wav",
@@ -23,7 +22,7 @@ string animationDirNames[] = {
 	"yellow_bird/PNG Sequence60"
 };
 
-float speeds[] = {600, 400, 200, 300};
+float speeds[] = {500, 400, 200, 300};
 
 
 void initAnimation(string s)
