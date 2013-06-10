@@ -1030,10 +1030,10 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
  
 
 
-	imshow("dst", dst);
+	//imshow("dst", dst);
 	//imshow("U", u8);
 
 
-	cv::waitKey(1);
+	//cv::waitKey(1);
 
 }
