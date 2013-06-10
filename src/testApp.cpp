@@ -793,7 +793,8 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		cv::Mat d(depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, (void*)depthFrame.getData());
 
 		cv::Mat userMask;
-		d.copyTo(userMask, u8);
+		d.convertTo(userMask, CV_32FC1);
+		userMask.copyTo(userMask, u8);
 		imshow("userMask", userMask);
 
 
