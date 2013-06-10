@@ -6,9 +6,16 @@
 
 #define PROFILE 1
 #include "ofxProfile.h"
+#include "..\Sound3d.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
+
+	Sound3D player;
+	player.loadSound(ofToDataPath("sound/organ.wav"));
+	player.setVolume(0.75);
+	player.setMultiPlay(true);
+	player.play();  
 
 	toDrawVideo = true;
 	toDrawScene = false;
