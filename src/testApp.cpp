@@ -800,11 +800,30 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		if (appUser.maskHist.size() > 2)
 		{
 
-			cv::Mat k =
-			appUser.maskHist[2] - 2 * appUser.maskHist[1] - appUser.maskHist[0];
+			cv::Mat mask1 = appUser.maskHist[0] >0 & appUser.maskHist[1]>0;
+			cv::Mat mask2 = appUser.maskHist[1] >0 & appUser.maskHist[2]>0;
+			cv::Mat mask3 = mask1 & mask2;
+
+			cv::Mat k0 = appUser.maskHist[1] - appUser.maskHist[0];//
+			cv::Mat k1 = appUser.maskHist[2] - appUser.maskHist[1];//
+
+			cv::Mat k = k0;
 
 			imshow("k", k);
 
+			cv::Mat k8;	k.convertTo(k8, CV_8UC1);
+			imshow("k8", k8);
+
+			cv::Mat k8mask;
+			k8.copyTo(k8mask, mask1);
+			imshow("k8mask", k8mask);
+
+			cv::Mat k8eq;
+			equalizeHist(k8, k8eq);
+			imshow("k8eq", k8eq);
+
+
+			
 			appUser.maskHist.pop_front();
 		}
 
