@@ -3,6 +3,17 @@
 vector<Sound3D> sounds;
 Sound3D gplayer;
 
+string soundNames[] = {
+	"sound/7898__schluppipuppie__bird006.wav",
+	"sound/9325__tigersound__bird-tweet-2.wav",
+	"sound/9327__tigersound__bird-tweet-4.wav",
+	"sound/983__rhumphries__rbh-bird-nightengale-1.wav",
+	"sound/bird1.wav",
+	"sound/Bird4.wav",
+	"sound/birds014.wav",
+	"sound/birds026.wav"
+};
+
 string animationDirNames[] = {
 	"blue_bird/PNG Sequence60",
 	"purple_bird/PNG Sequence60",
@@ -47,28 +58,24 @@ void Swarm::initImages()
 void Swarm::initSounds()
 {
 
-	gplayer.loadSound(ofToDataPath("sound/CAN.WAV"));
-	gplayer.setVolume(0.75);
-	gplayer.setMultiPlay(true);
-	gplayer.play();  
+	sounds.reserve(20);
 
-	ofDirectory dir;
-	int nFiles = dir.listDir("/sound");
-	if(nFiles) {
+	for (int i = 0; i < sizeof(soundNames) / sizeof(string); i++)
+	{
+
+		sounds.push_back(Sound3D());
+		Sound3D& player = sounds.back();
 		
-		for(int i=0; i<dir.numFiles(); i++)
-		{ 
-			sounds.push_back(Sound3D());
-			Sound3D& player = sounds.back();
-			// add the image to the vector
-			string filePath = dir.getPath(i);
-
-			player.loadSound(filePath);
-			player.setVolume(0.75);
-			player.setMultiPlay(true);
-//			player.play();
-		}
+		// add the image to the vector
+		string filePath = ofToDataPath(soundNames[i]);
+				
+		player.loadSound(filePath);
+		player.setVolume(0.75);
+		player.setMultiPlay(true);
+		player.play();
+		
 	}
+
 }
 
 
@@ -111,9 +118,12 @@ void Swarm::addParticle(int nParticles)
 void Swarm::customDraw(){
 
 
-	Sound3D& player = sounds.back();
-	if(!player.getIsPlaying())
-		player.play();
+	if (ofGetSystemTime() % 1000 < 10)
+	{
+		Sound3D& player = sounds[rand() % sounds.size()];
+		if(!player.getIsPlaying())
+			player.play();
+	}
 
 
 	ofPushStyle();

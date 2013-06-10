@@ -706,7 +706,7 @@ void testApp::exit()
 	colorStream.exit();
 
 //! TODO check:
-	Sound3D::closeFmod();
+//	Sound3D::closeFmod();
 
 }
 
