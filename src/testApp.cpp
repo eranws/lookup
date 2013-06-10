@@ -780,9 +780,10 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		ofVec2f com2d = depthStream.worldToCamera(com);
 		cv::circle(dst, cv::Point(com2d.x, com2d.y), 5 , red, 2);
 		
+		UserAppData& appUser = appUserMap[id];
 		if (userData.getSkeleton().getState() == nite::SKELETON_TRACKED)
 		{
-			appUserMap[id].updateSkeleton(userData);
+			appUser.updateSkeleton(userData);
 		}
 
 		//# Contour processing
@@ -794,6 +795,18 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		cv::Mat userMask;
 		d.copyTo(userMask, u8);
 		imshow("userMask", userMask);
+
+		appUser.maskHist.push_back(userMask);
+		if (appUser.maskHist.size() > 2)
+		{
+
+			cv::Mat k =
+			appUser.maskHist[2] - 2 * appUser.maskHist[1] - appUser.maskHist[0];
+
+			imshow("k", k);
+
+			appUser.maskHist.pop_front();
+		}
 
 		cv::Mat userMask2;
 		depthMat.copyTo(userMask2, u8);

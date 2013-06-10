@@ -3,6 +3,7 @@
 #include <map>
 #include "ofMain.h"
 #include "NiTE.h"
+#include "opencv2\opencv.hpp"
 
 class UserAppData
 {
@@ -42,4 +43,6 @@ public:
 		ofVec2f position2dHD;
 		ofPoint velocity;
 	} status;
+
+	std::deque<cv::Mat> maskHist;
 };
