@@ -2,9 +2,10 @@
 #include "ofImage.h"
 
 
-Bird::Bird(BirdData& bd, vector <ofImage>& vi) :
+Bird::Bird(BirdData& bd, vector <ofImage>& vi, float speed) :
 	size(bd.size), velocity(bd.velocity), _images(vi)
 {
+		velocity *= speed;
 		setPosition(bd.position);
 
 		color.r = ofRandom(255.0f);
@@ -84,17 +85,27 @@ void Bird::customDraw()
 
 void Bird::update(){
 
-const float SPRING_CONSTANT = 0.1f;
+const float SPRING_CONSTANT = 1.0f;
 const float MAX_VELOCITY = 30.0f;
 
 	// Calculate time past per frame
 	float dt = ofGetLastFrameTime();
+
+	int age = ofGetSystemTime() - birth;
+	if (age < 500){
+		dt *= (float(age) / 500);
+	}
 	move(velocity * dt);
-	velocity += -SPRING_CONSTANT * (getPosition() - ofPoint(320, 512, 5)) * dt;
-	velocity.limit(MAX_VELOCITY);
-}
 
-void Bird::setup()
-{
 
+	if (ofGetFrameNum() % int(ofGetFrameRate()) == 0)
+	{
+		turnTarget = ofRandom(-2, 2);
+	}
+
+	turn = (0.5 * turn) + 0.5 * turnTarget;
+	velocity.rotate(turn, ofVec3f(0,0,1));
+
+//	velocity += -SPRING_CONSTANT * (getPosition() - ofPoint(ofGetWindowWidth()/2, ofGetWindowHeight()/2, 5)) * dt;
+//	velocity.limit(MAX_VELOCITY);
 }

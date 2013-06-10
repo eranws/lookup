@@ -9,10 +9,9 @@ class Bird : public ofNode
 {
 public:
 	
-	Bird(BirdData& bd, vector <ofImage>& vi);
+	Bird(BirdData& bd, vector <ofImage>& vi, float speed);
 	~Bird();
 
-	void setup();
 	virtual void customDraw();
 	void update();
 	
@@ -24,6 +23,9 @@ public:
 	int animationFrameStart;
 	int glideFrameStart;
 	int birth;
+
+	float turn;
+	float turnTarget;
 
 	int rw;
 

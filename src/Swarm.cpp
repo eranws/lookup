@@ -1,5 +1,6 @@
 #include "Swarm.h"
 #include "..\BirdEvents.h"
+#include "Bird.h"
 
 vector<Sound3D> sounds;
 Sound3D gplayer;
@@ -21,6 +22,9 @@ string animationDirNames[] = {
 	"mustard_bird/PNG Sequence60",
 	"yellow_bird/PNG Sequence60"
 };
+
+float speeds[] = {600, 400, 200, 300};
+
 
 void initAnimation(string s)
 {
@@ -98,9 +102,7 @@ void Swarm::init(){
 void Swarm::addParticle(BirdData& bd)
 {
 	int idx = rand() % animations.size();
-	Bird* b = new Bird(bd, animations[idx]);
-
-	b->setup();
+	Bird* b = new Bird(bd, animations[idx], speeds[idx]);
 	particles.push_back(ofPtr<Bird>(b));
 }
 

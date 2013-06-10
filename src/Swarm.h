@@ -7,7 +7,8 @@
 #include "..\BirdEvents.h"
 
 typedef vector<ofImage> Animation;
-static vector<Animation> animations; 
+static vector<Animation> animations;
+
 
 class Swarm : public ofNode {
 

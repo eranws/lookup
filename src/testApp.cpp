@@ -696,6 +696,7 @@ void testApp::createBird( BirdData& p )
 
 void testApp::exit()
 {
+	ofSetFullscreen(false);
 	depthStream.exit();
 	colorStream.exit();
 
@@ -1018,6 +1019,8 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 			bd.size = sz * sz;
 			
 			bd.velocity = pHD - toGrayHD(com2d);
+			bd.velocity.normalize();
+
 			ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
 		}
 
