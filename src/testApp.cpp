@@ -761,6 +761,23 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 	cv::Mat users(userMap.getHeight(), userMap.getWidth(), CV_16UC1, (void*)userMap.getPixels());
 	cv::Mat dst(users.size(), CV_8UC3); //debug drawing stuff
 
+	if (userDataArray.isEmpty()){
+		int f = ofGetFrameNum() % 300;
+		if (f == 0)
+		{
+			int k = (rand() % 2) * 2 - 1;
+			BirdData bd;
+
+			bd.position = ofPoint(ofGetWindowWidth() * (0.5 + 0.25 * k), ofRandom(0.25, 0.75) * ofGetScreenHeight(), 5);
+			bd.velocity = ofVec3f(-k, 0, 0);
+			
+			
+			bd.size = 0.5;
+			
+			ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
+		}
+	}
+
 	for (int userIndex = 0; userIndex < userDataArray.getSize(); userIndex++)
 	{
 		const nite::UserData& userData = userDataArray[userIndex];

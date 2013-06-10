@@ -9,7 +9,7 @@ string soundNames[] = {
 	"sound/7898__schluppipuppie__bird006.wav",
 	"sound/9325__tigersound__bird-tweet-2.wav",
 	"sound/9327__tigersound__bird-tweet-4.wav",
-	"sound/983__rhumphries__rbh-bird-nightengale-1.wav",
+	"sound/9328__tigersound__bird-tweet",
 	"sound/bird1.wav",
 	"sound/Bird4.wav",
 	"sound/birds014.wav",
@@ -111,7 +111,7 @@ void Swarm::addParticle(int nParticles)
 	for (int i = 0; i < nParticles; i++)
 	{
 		BirdData bd;
-		bd.position = ofPoint(320, 512, 5);
+		bd.position = ofPoint(320, ofRandom(0.25, 0.75) * ofGetScreenHeight(), 5);
 		bd.velocity = ofVec3f(1, 0, 0);
 		bd.size = 0.5;
 		addParticle(bd);
