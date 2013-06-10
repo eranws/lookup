@@ -769,6 +769,7 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 		{
 			appUserMap.erase(id);
 		}
+
 		if (!userData.isVisible())
 		{
 			continue;
@@ -786,6 +787,17 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 
 		//# Contour processing
 		cv::Mat u8 = (users == id);
+
+		cv::Mat d;
+	userTrackerFrame.getDepthFrame().getData();
+	//colorTex.loadData(colorMat.ptr(), colorMat.cols, colorMat.rows, GL_LUMINANCE);
+
+
+		cv::Mat userMask;
+		depthMat.copyTo(userMask, u8);
+		imshow("userMask", userMask);
+//appUserMap[id]
+
 
 		//detect peaks
 		std::vector<std::vector<cv::Point> > contours;
