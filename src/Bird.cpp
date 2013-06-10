@@ -73,9 +73,17 @@ void Bird::customDraw()
 		scl *= f;
 	}
 
+	if (age > 10000)
+	{
+		scl *= ofMap(age, 10000, 15000, 1, 0);
+	}
 
-	ofScale(scl, scl);
-	img.draw(0,0);
+
+	if (scl > 0.01)
+	{
+		ofScale(scl, scl);
+		img.draw(0,0);
+	}
 	ofPopMatrix();
 
 	ofPopStyle();
