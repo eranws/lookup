@@ -22,7 +22,15 @@ string animationDirNames[] = {
 	"yellow_bird/PNG Sequence60"
 };
 
-float speeds[] = {500, 400, 200, 300};
+ofColor birdColors[] = 
+{
+	ofColor(29, 133, 251),
+	ofColor(255, 188, 18),
+	ofColor(82, 206, 46),
+	ofColor(255, 15, 15)
+};
+
+float speeds[] = {400, 300, 100, 200};
 
 
 void initAnimation(string s)
@@ -102,6 +110,9 @@ void Swarm::addParticle(BirdData& bd)
 {
 	int idx = rand() % animations.size();
 	Bird* b = new Bird(bd, animations[idx], speeds[idx]);
+	b->color = birdColors[idx];
+	b->color.setHue(b->color.getHue() + ofRandom(-10, +10));
+
 	particles.push_back(ofPtr<Bird>(b));
 }
 

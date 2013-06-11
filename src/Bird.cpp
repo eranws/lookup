@@ -8,10 +8,11 @@ Bird::Bird(BirdData& bd, vector <ofImage>& vi, float speed) :
 		velocity *= speed;
 		setPosition(bd.position);
 
-		color.r = ofRandom(255.0f);
-		color.g = ofRandom(255.0f);
-		color.b = 150.0f;
+//		color.r = ofRandom(255.0f);
+//		color.g = ofRandom(255.0f);
+//		color.b = 150.0f;
 		color.a = 255.0f;
+
 
 		animationFrameStart = 11;
 		birth = ofGetSystemTime();
@@ -73,9 +74,9 @@ void Bird::customDraw()
 		scl *= f;
 	}
 
-	if (age > 10000)
+	if (age > 20000)
 	{
-		scl *= ofMap(age, 10000, 15000, 1, 0);
+		scl *= ofMap(age, 20000, 25000, 1, 0);
 	}
 
 
@@ -108,7 +109,7 @@ const float MAX_VELOCITY = 30.0f;
 
 	if (ofGetFrameNum() % int(ofGetFrameRate()) == 0)
 	{
-		turnTarget = ofRandom(-2, 2);
+		turnTarget = ofRandom(-5, 5);
 	}
 
 	turn = (0.5 * turn) + 0.5 * turnTarget;
