@@ -104,17 +104,19 @@ const float MAX_VELOCITY = 30.0f;
 	if (age < 500){
 		dt *= (float(age) / 500);
 	}
-	move(velocity * dt);
-
-
-	if (ofGetFrameNum() % int(ofGetFrameRate()) == 0)
+	else
 	{
-		turnTarget = ofRandom(-5, 5);
+		if (ofGetFrameNum() % int(ofGetFrameRate()) == 0)
+		{
+			turnTarget = ofRandom(-3, 3);
+		}
 	}
+
 
 	turn = (0.5 * turn) + 0.5 * turnTarget;
 	velocity.rotate(turn, ofVec3f(0,0,1));
 
 //	velocity += -SPRING_CONSTANT * (getPosition() - ofPoint(ofGetWindowWidth()/2, ofGetWindowHeight()/2, 5)) * dt;
 //	velocity.limit(MAX_VELOCITY);
+	move(velocity * dt);
 }
