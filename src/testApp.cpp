@@ -8,6 +8,7 @@
 #include "ofxProfile.h"
 #include "..\Sound3d.h"
 
+
 //--------------------------------------------------------------
 void testApp::setup(){
 
@@ -24,11 +25,12 @@ void testApp::setup(){
 	ofSetFullscreen(true);
 	ofHideCursor();
 
-	ofBackground(70, 70, 70);
+	ofBackground(64);
 	ofEnableSmoothing();
 	glEnable(GL_DEPTH_TEST);
 	glAlphaFunc(GL_GREATER, 0.5);
 	glEnable(GL_ALPHA_TEST);
+
 
 	try
 	{
@@ -61,6 +63,8 @@ void testApp::setup(){
 	
 	registerBirdEvents(this);
 
+
+
 }
 
 void testApp::drawVideo2D(){
@@ -77,7 +81,7 @@ void testApp::drawVideo2D(){
 
 	shadowTex.drawSubsection(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024, sx, sy, sw, sh);
 
-//	Trees::draw();
+	Trees::draw();
 
 	drawVideo();
 }

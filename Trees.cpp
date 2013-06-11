@@ -21,6 +21,7 @@ void Trees::init(string dirString)
 	//int nFiles = dir.listDir("plops");
 	int nFiles = dir.listDir(dirString);//"/treetop/PNG Sequence");
 	if(nFiles) {        
+		images.reserve(nFiles);
 		for(int i=0; i<dir.numFiles(); i++) { 
 			// add the image to the vector
 			string filePath = dir.getPath(i);
@@ -44,4 +45,6 @@ void Trees::draw()
 	int i = rw % images.size();
 
 	images[i].draw(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024);
+//	images[i].draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+
 }
