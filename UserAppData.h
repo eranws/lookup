@@ -19,6 +19,19 @@ public:
 	float dRunAvg;
 	bool dTrigger;
 
+
+	static int dValuesSize2;
+	static int dValuesLowThreshold2;
+	static int dValuesHighThreshold2;
+
+	std::deque<float> dValues2;
+	float dRunAvg2;
+	bool dTrigger2;
+
+	std::deque<float> dValuesL;
+	float dRunAvgL;
+	bool dTriggerL;
+
 	//hand cluster
 	static int hcValuesMaxSize;
 	static int hcValuesLowThreshold;

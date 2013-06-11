@@ -1,8 +1,12 @@
 #include "UserAppData.h"
 
-int UserAppData::dValuesSize = 20;
+int UserAppData::dValuesSize = 5;
 int UserAppData::dValuesLowThreshold = 140;
 int UserAppData::dValuesHighThreshold = 300;
+
+int UserAppData::dValuesSize2 = 30;
+int UserAppData::dValuesLowThreshold2 = 10;
+int UserAppData::dValuesHighThreshold2 = 0;
 
 int UserAppData::hcValuesMaxSize = 3;
 float UserAppData::hcValuesHighThreshold = 1.5;
@@ -16,6 +20,8 @@ void UserAppData::updateSkeleton( const nite::UserData& user )
 	const nite::SkeletonJoint& leftElbow = skeleton.getJoint(nite::JOINT_LEFT_ELBOW);
 	const nite::SkeletonJoint& rightHand = skeleton.getJoint(nite::JOINT_RIGHT_HAND);
 	const nite::SkeletonJoint& rightElbow = skeleton.getJoint(nite::JOINT_RIGHT_ELBOW);
+	const nite::SkeletonJoint& rightShoulder = skeleton.getJoint(nite::JOINT_RIGHT_SHOULDER);
+	const nite::SkeletonJoint& leftShoulder = skeleton.getJoint(nite::JOINT_LEFT_SHOULDER);
 
 	if (head.getPositionConfidence() > .5)
 	{
@@ -59,7 +65,7 @@ void UserAppData::updateSkeleton( const nite::UserData& user )
 				status.valid = true;
 				status.position3d = p1.middle(p2);
 				status.realWorld = true;
-		}
+			}
 			if (dRunAvg > dValuesHighThreshold * dValuesSize)
 			{
 				dTrigger = true;
@@ -69,6 +75,46 @@ void UserAppData::updateSkeleton( const nite::UserData& user )
 	}
 
 	//printf("\n"); 
+
+	//hand above shoulder
+	{
+		const nite::SkeletonJoint& jH = rightHand;
+		const nite::SkeletonJoint& jE = rightShoulder;
+
+		if (jH.getPositionConfidence() > .5 && jE.getPositionConfidence() > .5){
+
+			const nite::Point3f& npH = jH.getPosition(); //np - nitePoint
+			const nite::Point3f& npE = jE.getPosition();
+
+			ofPoint pH(npH.x, npH.y, npH.z); //of Point
+			ofPoint pE(npE.x, npE.y, npE.z);
+
+			float d = (pH - pE).y;
+			//	printf("R: %5.2f \n", rightElbow.getPosition().y - rightHand.getPosition().y);
+
+			//printf("D: %5.2f\t", d); 
+			dRunAvg2 += d;
+			dValues2.push_front(d);
+			if (dValues2.size() > dValuesSize2)
+			{
+				dRunAvg2 -= dValues2.back();
+				dValues2.pop_back();
+
+				//printf("dRunAvg: %.2f\t", dRunAvg); 
+				if (dRunAvg2 > dValuesLowThreshold2 * dValuesSize2 && dTrigger2)
+				{
+					dTrigger2 = false;
+					status.valid = true;
+					status.position3d = pH;
+					status.realWorld = true;
+				}
+				if (dRunAvg2 < dValuesHighThreshold2 * dValuesSize2 )
+				{
+					dTrigger2 = true;
+				}
+			}	
+		}
+	}
 
 }
 
