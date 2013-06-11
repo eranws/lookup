@@ -101,8 +101,9 @@ const float MAX_VELOCITY = 30.0f;
 	float dt = ofGetLastFrameTime();
 
 	int age = ofGetSystemTime() - birth;
-	if (age < 500){
-		dt *= (float(age) / 500);
+	if (age < 1500){ //accelerate from zero on create
+		float x = (float(age) / 1500);
+		dt *= (x*x);
 	}
 	else
 	{
@@ -112,6 +113,10 @@ const float MAX_VELOCITY = 30.0f;
 		}
 	}
 
+	if (getPosition().x < 0 || getPosition().x > ofGetWindowWidth() || getPosition().y < 0 || getPosition().y > ofGetWindowHeight() )
+	{
+		turnTarget = 3;
+	}
 
 	turn = (0.5 * turn) + 0.5 * turnTarget;
 	velocity.rotate(turn, ofVec3f(0,0,1));
