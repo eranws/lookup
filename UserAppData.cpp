@@ -4,8 +4,8 @@ int UserAppData::dValuesSize = 20;
 int UserAppData::dValuesLowThreshold = 140;
 int UserAppData::dValuesHighThreshold = 300;
 
-int UserAppData::hcValuesMaxSize = 15;
-int UserAppData::hcValuesHighThreshold = 2;
+int UserAppData::hcValuesMaxSize = 3;
+float UserAppData::hcValuesHighThreshold = 1.5;
 int UserAppData::hcValuesLowThreshold = 1;
 
 void UserAppData::updateSkeleton( const nite::UserData& user )
@@ -81,7 +81,7 @@ void UserAppData::updateHandCluster( ofVec2f p, int maxCount )
 		hcRunAvg -= hcValues.back();
 		hcValues.pop_back();
 
-		if (hcRunAvg > hcValuesHighThreshold * hcValuesMaxSize && hcTrigger)
+		if (hcRunAvg > (hcValuesHighThreshold * hcValuesMaxSize) && hcTrigger)
 		{
 			hcTrigger = false;
 			status.valid = true;

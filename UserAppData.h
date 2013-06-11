@@ -22,7 +22,7 @@ public:
 	//hand cluster
 	static int hcValuesMaxSize;
 	static int hcValuesLowThreshold;
-	static int hcValuesHighThreshold;
+	static float hcValuesHighThreshold;
 
 	std::deque<float> hcValues;
 	float hcRunAvg;
