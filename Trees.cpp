@@ -5,16 +5,6 @@
 
 vector <ofImage> Trees::images;
 
-
-Trees::Trees(void)
-{
-}
-
-
-Trees::~Trees(void)
-{
-}
-
 void Trees::init(string dirString)
 {
 	ofDirectory dir;
@@ -36,7 +26,7 @@ void Trees::init(string dirString)
 	}
 }
 
-void Trees::draw()
+void Trees::draw(ofRectangle r)
 {
 	static int rw = 0;
 
@@ -52,7 +42,7 @@ void Trees::draw()
 	
 	int i = rw % images.size();
 
-	images[i].draw(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024);
-//	images[i].draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+	images[i].draw(r);
+		//	images[i].draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 
 }

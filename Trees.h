@@ -4,7 +4,7 @@
 {
 public:
 	static void init(string dirString);
-	static void draw();
+	static void draw(ofRectangle r);
 
 private:
 	Trees(void);
