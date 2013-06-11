@@ -186,7 +186,7 @@ void testApp::setupGui()
 
 	gui1->addToggle("Toggle Exposure", &toggleExposure, dim, dim);
 	gui1->addToggle("Toggle Gain", &toggleGain, dim, dim);
-	gui1->addSlider("Gain", 0.0, 1570, 400, length-xInit,dim);
+	gui1->addSlider("Gain", 0.0, 1570, 450, length-xInit,dim);
 	gui1->addSlider("Exposure", 1.0, 30.0, 30.0, length-xInit,dim);
 
 
@@ -351,7 +351,7 @@ void testApp::draw(){
 	
 	ofPushStyle();
 	ofSetColor(0);
-	ofRectangle r2(0, ofGetHeight() - 900, ofGetWidth(), 900);
+	ofRectangle r2(0, ofGetHeight() - 1200, ofGetWidth(), 1200);
 	treesFg.draw(r2);
 	ofPopStyle();
 
