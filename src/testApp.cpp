@@ -7,7 +7,9 @@
 //#define PROFILE
 #include "ofxProfile.h"
 #include "..\Sound3d.h"
+#include "ofGraphics.h"
 
+ofImage treesFg;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -64,7 +66,7 @@ void testApp::setup(){
 	registerBirdEvents(this);
 
 
-
+	treesFg.loadImage(ofToDataPath("treesFg/treetop4_grafix60_01_3X4_big.png"));
 }
 
 void testApp::drawVideo2D(){
@@ -81,7 +83,10 @@ void testApp::drawVideo2D(){
 
 	shadowTex.drawSubsection(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024, sx, sy, sw, sh);
 
-	Trees::draw();
+	
+	ofRectangle r(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024);
+
+	Trees::draw(r);
 
 	drawVideo();
 }
@@ -339,6 +344,12 @@ void testApp::draw(){
 	drawScene(iMainCamera);
 	glEnable(GL_DEPTH_TEST);
 
+	
+	ofPushStyle();
+	ofSetColor(0);
+	ofRectangle r2(0, ofGetHeight() - 900, ofGetWidth(), 900);
+	treesFg.draw(r2);
+	ofPopStyle();
 
 	//TODO: add widgets dynamically in one line
 	//#define addMat(x) cv::Mat& x = matMap[#x] = cv::Mat();
