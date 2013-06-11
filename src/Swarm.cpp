@@ -3,6 +3,9 @@
 #include "Bird.h"
 
 vector<Sound3D> sounds;
+Sound3D flapSound;
+string flapSoundPath = "sound/wtf2.wav";
+
 Sound3D gplayer;
 
 string soundNames[] = {
@@ -88,6 +91,15 @@ void Swarm::initSounds()
 		
 	}
 
+
+	string filePath = ofToDataPath(flapSoundPath);
+
+	flapSound.loadSound(filePath);
+	flapSound.setVolume(0.75);
+	flapSound.setMultiPlay(true);
+	flapSound.play();
+
+
 }
 
 
@@ -114,6 +126,7 @@ void Swarm::addParticle(BirdData& bd)
 	b->color.setHue(b->color.getHue() + ofRandom(-10, +10));
 
 	particles.push_back(ofPtr<Bird>(b));
+	flapSound.play();
 }
 
 void Swarm::addParticle(int nParticles)
