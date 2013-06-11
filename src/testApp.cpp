@@ -10,6 +10,7 @@
 #include "ofGraphics.h"
 
 ofImage treesFg;
+ofImage handSil;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -18,6 +19,7 @@ void testApp::setup(){
 	toDrawScene = false;
 	toDrawSideViewports = false;
 	toggleMirror = false;
+	toShowDemo = false;
 
 	showHelpText = false;
 
@@ -67,6 +69,7 @@ void testApp::setup(){
 
 
 	treesFg.loadImage(ofToDataPath("treesFg/treetop4_grafix60_01_3X4_big.png"));
+	handSil.loadImage(ofToDataPath("sil/handSil.png"));
 }
 
 void testApp::drawVideo2D(){
@@ -341,6 +344,7 @@ void testApp::draw(){
 	}
 	glDisable(GL_DEPTH_TEST);
 	drawVideo2D();
+	drawDemo();
 	drawScene(iMainCamera);
 	glEnable(GL_DEPTH_TEST);
 
@@ -790,7 +794,16 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 			bd.size = 0.5;
 			
 			ofNotifyEvent(getBirdEvents().createBird, bd); //TODO send id
+
 		}
+
+
+		if (!toShowDemo && (ofGetFrameNum() % (60 * 20) == 0))
+		{
+			toShowDemo = true;
+			demoAnimationStartFrame = ofGetFrameNum();
+		}
+
 	}
 
 	for (int userIndex = 0; userIndex < userDataArray.getSize(); userIndex++)
@@ -1068,4 +1081,37 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 
 	//cv::waitKey(1);
 
+}
+
+void testApp::drawDemo()
+{
+	if (toShowDemo)
+	{
+		int f = ofGetFrameNum() - demoAnimationStartFrame;
+		if (f > 400)
+		{
+			toShowDemo = false;
+		}
+
+		if (f == 150)
+		{
+			BirdData bd;
+
+			bd.position = ofPoint(ofGetWindowWidth() / 2 - 320 + 670 - 200 + 72, ofGetWindowHeight() - 1024 + 512 + 160, 5);
+			bd.velocity = ofVec3f(24 - 72, 180 - 160, 0);
+			bd.velocity.limit(1);
+			bd.size = 0.5;
+			createBird(bd);
+		}
+
+		int x;
+		if (f < 100) x = f * 2;
+		else if (f < 200) x = 200;
+		else if (f < 400) x = 400 - f;
+
+
+		handSil.draw(ofGetWindowWidth() / 2 - 320 + 670 - x, ofGetWindowHeight() - 1024 + 512);
+
+
+	}
 }

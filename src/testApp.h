@@ -80,6 +80,8 @@ private:
 		bool toDrawGrid;
 		bool toDrawSideViewports;
 		bool showHelpText;
+		bool toShowDemo;
+		int demoAnimationStartFrame;
 
 		bool toggleMirror;
 		bool toggleExposure;
@@ -99,6 +101,7 @@ private:
 		void cvProcess();
 
 		virtual void exit();
+		void drawDemo();
 
 
 
