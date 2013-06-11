@@ -4,9 +4,9 @@ int UserAppData::dValuesSize = 5;
 int UserAppData::dValuesLowThreshold = 140;
 int UserAppData::dValuesHighThreshold = 300;
 
-int UserAppData::dValuesSize2 = 30;
+int UserAppData::dValuesSize2 = 60;
 int UserAppData::dValuesLowThreshold2 = 10;
-int UserAppData::dValuesHighThreshold2 = 0;
+int UserAppData::dValuesHighThreshold2 = -20;
 
 int UserAppData::hcValuesMaxSize = 3;
 float UserAppData::hcValuesHighThreshold = 1.5;
@@ -115,6 +115,50 @@ void UserAppData::updateSkeleton( const nite::UserData& user )
 			}	
 		}
 	}
+
+
+
+	//hand above shoulder
+	{
+		const nite::SkeletonJoint& jH = leftHand;
+		const nite::SkeletonJoint& jE = leftShoulder;
+
+		if (jH.getPositionConfidence() > .5 && jE.getPositionConfidence() > .5){
+
+			const nite::Point3f& npH = jH.getPosition(); //np - nitePoint
+			const nite::Point3f& npE = jE.getPosition();
+
+			ofPoint pH(npH.x, npH.y, npH.z); //of Point
+			ofPoint pE(npE.x, npE.y, npE.z);
+
+			float d = (pH - pE).y;
+			//	printf("R: %5.2f \n", rightElbow.getPosition().y - rightHand.getPosition().y);
+
+			//printf("D: %5.2f\t", d); 
+			dRunAvgL += d;
+			dValuesL.push_front(d);
+			if (dValuesL.size() > dValuesSize2)
+			{
+				dRunAvgL -= dValuesL.back();
+				dValuesL.pop_back();
+
+				//printf("dRunAvg: %.2f\t", dRunAvg); 
+				if (dRunAvgL > dValuesLowThreshold2 * dValuesSize2 && dTriggerL)
+				{
+					dTriggerL = false;
+					status.valid = true;
+					status.position3d = pH;
+					status.realWorld = true;
+				}
+				if (dRunAvgL < dValuesHighThreshold2 * dValuesSize2 )
+				{
+					dTriggerL = true;
+				}
+			}	
+		}
+	}
+
+
 
 }
 
