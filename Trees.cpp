@@ -39,9 +39,17 @@ void Trees::init(string dirString)
 void Trees::draw()
 {
 	static int rw = 0;
-	rw += (rand() % 4) ? 1 : (rand() % 4) ? 0 : -1; //random walk
-	//int i = ofGetFrameNum();
 
+	int f = ofGetFrameNum();
+	if (f % 4 == 0)
+	{
+		//rw+=(rand()%2)*2-1;
+		rw++;
+//		rw += (rand() % 2) * 2 - 1;
+		//) ? 0 : (rand() % 3) - 1;// ? 1 : (rand() % 4) ? 0 : -1; //random walk
+	}
+	//rw += (rand() % 4) ? 0 : (rand() % 3) - 1;// ? 1 : (rand() % 4) ? 0 : -1; //random walk
+	
 	int i = rw % images.size();
 
 	images[i].draw(ofGetWindowWidth() / 2 - 320, ofGetWindowHeight() - 1024, 640, 1024);
