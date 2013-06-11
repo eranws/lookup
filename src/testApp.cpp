@@ -1018,10 +1018,10 @@ void testApp::updateUserTracker( nite::UserTrackerFrameRef& userTrackerFrame )
 			} // ci < hierarchy.size()
 		} // if contours && hierarchy !empty
 
-		if (appUserMap[id].status.valid)
+		if (appUserMap[id].status.valid && (ofGetSystemTime() - appUserMap[id].status.lastTime) > 3000)
 		{
+			appUserMap[id].status.lastTime = ofGetSystemTime();
 			appUserMap[id].status.valid = false;
-			//! TODO: set timeout
 
 			BirdData bd;
 			ofVec2f p;

@@ -47,12 +47,13 @@ public:
 	//std::vector<string> userOutputStrings;
 	struct Status
 	{
-		Status() : valid(false){}
+		Status() : valid(false), lastTime(0){}
 
 		bool valid;
 		bool realWorld;
 		ofPoint position3d;
 		ofVec2f position2dHD;
 		ofPoint velocity;
+		unsigned long lastTime;
 	} status;
 };
