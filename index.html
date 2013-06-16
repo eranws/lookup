@@ -38,6 +38,251 @@
 
 <p>participants actively introduce more and more silhouette that make the space come alive. </p>
       </section>
+
+<section>
+
+
+
+
+ <canvas class="anim" id="canvas" width="960" height="768"></canvas>
+
+<!--   
+   <img id="profile_pic_welcome_633808423" class="-cx-PRIVATE-uiSquareImage__root fbxWelcomeBoxImg -cx-PRIVATE-uiSquareImage__large img" alt="" src="https://dl.dropboxusercontent.com/u/3685114/lookup/web_lookup4.png"></img>
+
+<br/>
+Now we have a website!
+<br/>
+<img id="profile_pic_welcome_633808423" class="-cx-PRIVATE-uiSquareImage__root fbxWelcomeBoxImg -cx-PRIVATE-uiSquareImage__large img" alt="" src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn1/49146_633808423_2352_q.jpg"></img>
+<br/>
+-->
+
+<style type="text/css">
+
+body {
+
+  background: #000 no-repeat left top;
+/*url(web_lookup4.png)*/
+  
+width: 100%;
+  height: 100%;
+  /*  background-size: 100%;*/
+}
+
+
+canvas.anim {
+  width: 100%;
+  height: 100%;
+}
+
+
+</style>
+
+<script type="text/javascript">
+
+
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+//var img1 = loadImage( 'https://dl.dropboxusercontent.com/u/3685114/lookup/web_lookup4.png'  , main);
+//  'http://upload.wikimedia.org/wikipedia/en/2/24/Lenna.png'
+
+var img2 = loadImage('http://introcs.cs.princeton.edu/java/31datatype/peppers.jpg', main);
+var img3 = loadImage( 'https://dl.dropboxusercontent.com/u/3685114/lookup/web_lookup4.png'  , main);
+var img4 = loadImage( 'https://dl.dropboxusercontent.com/u/3685114/lookup/web_lookup4_crop.png' , main);
+var img5 = loadImage( 'https://dl.dropboxusercontent.com/u/3685114/lookup/web_lookup10.png' , main);
+
+
+
+var imgs = [];
+for (i=6;i<=10;i++) imgs[i] = loadImage(  'https://dl.dropboxusercontent.com/u/3685114/lookup/web_lookup'+  i + '.png', main);
+imgs[3]=img3;
+imgs[4]=img4;
+imgs[5]=img5;
+
+var imgfg = loadImage(  'https://dl.dropboxusercontent.com/u/3685114/lookup/web_lookup_fg.png'  , main);
+
+//  height: 100%;
+
+
+var imagesLoaded = 0;
+function main() {
+    imagesLoaded += 1;
+
+    if(imagesLoaded == 2) {
+        // composite now
+        ctx.drawImage(img4, 0, 0);
+        
+        ctx.globalAlpha = 0.2;
+        ctx.drawImage(img5, 0, 0);
+
+
+    }
+}
+
+function loadImage(src, onload) {
+    // http://www.thefutureoftheweb.com/blog/image-onload-isnt-being-called
+    var img = new Image();
+    
+    img.onload = onload;
+    img.src = src;
+
+    return img;
+}
+
+//var prevX = 0;
+var xVal = 0;
+var xTarget = 0;
+var yVal = 0;
+var yTarget = 0;
+ function draw(canvas, evt, mousePos) {
+
+//        xTarget = mousePos.x / canvas.width;
+
+        var rect = canvas.getBoundingClientRect();
+        xTarget = mousePos.x / rect.width;
+    yTarget = mousePos.y / rect.height;
+
+
+
+  }
+
+/*
+      function writeMessage(canvas, message) {
+        var ctx = canvas.getContext('2d');
+//        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img4, 0, 0);
+        
+        ctx.globalAlpha = 0.2;
+        ctx.drawImage(img5, 0, 0);
+
+        ctx.font = '18pt Calibri';
+        ctx.fillStyle = 'black';
+        ctx.fillText(message, 10, 25);
+      }
+*/
+      function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }
+//      var canvas = document.getElementById('myCanvas');
+ //     var ctx = canvas.getContext('2d');
+
+      canvas.addEventListener('mousemove', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+ //       var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+//        writeMessage(canvas, message);
+        draw(canvas, evt, mousePos);
+
+      }, false);
+
+      window.requestAnimFrame = (function(callback) {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+        function(callback) {
+          window.setTimeout(callback, 1000 / 60);
+        };
+      })();
+
+  function drawStuff()
+  {
+//    var canvas = document.getElementById("canvas");
+//      var ctx = canvas.getContext('2d');
+ //       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    var p = 50;
+    var q = 1;
+      xVal = (xVal * p + xTarget * q) / (p+q); //LPF
+      yVal = (yVal * p + yTarget * q) / (p+q); //LPF
+//      xVal /= (p+q); 
+
+if (xTarget > 0.5)
+{
+  if (xTarget < 0.75) xTarget -= 0.01;
+  else if (xTarget < 1.0) xTarget += 0.01;
+
+}
+
+
+        
+
+       var rect = canvas.getBoundingClientRect();
+
+
+       ctx.globalAlpha = xVal;
+        ctx.drawImage(img4, 0, 0);
+
+       ctx.globalAlpha = 1-xVal;//(x>0.5 ? 1 : -1) * 0.5 * x + 0.5;
+       ctx.drawImage(img5, -xVal * 10, -yVal * 20);
+       
+
+    ctx.globalAlpha = 1-yVal;//(x>0.5 ? 1 : -1) * 0.5 * x + 0.5;
+       
+       ctx.drawImage(imgs[8], xVal * 10, yVal * 20);
+       
+
+
+        var MN=11;//6;
+        var MX=11;
+
+        for (i=MN;i<MX;i++)
+        {
+          ix = (i-MN);
+          rng = (MX-MN); //or count
+          prcnt=ix/rng;
+
+      bubu = (x>0.5 ? 1 : -1) * 0.5 * x + 0.5;
+
+      alp = x * rng - ix;
+
+//            ctx.globalAlpha = (alp > 1 || alp< 0)? 0 : alp
+//            x*MX - x*MN - i + MN = MN * (1-x) + MX * x - i
+          ctx.drawImage(imgs[i],  0, 0);  
+        } 
+
+            ctx.globalAlpha = 1.0;
+                    var rect = canvas.getBoundingClientRect();
+
+          ctx.drawImage(imgfg, 0, 0);//, rect.width, rect.height);  
+  //    ctx.drawImage(imgfg,0,0,canvas.width, canvas.height,0, 0, canvas.width, canvas.height);
+//303
+
+        ctx.font = '18pt Calibri';
+        ctx.fillStyle = 'black';
+ 
+}
+
+      function animate() {
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+
+        // update
+
+        // clear
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        drawStuff();
+
+        // request new frame
+        requestAnimFrame(function() {
+          animate();
+        });
+      }
+      animate();
+
+    </script>
+    
+
+
+
+
+
+
+
+</section>
+
+
       <footer>
         <p>This project is maintained by <a href="https://github.com/eranws">eranws</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
